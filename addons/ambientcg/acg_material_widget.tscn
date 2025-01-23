@@ -1,0 +1,42 @@
+[gd_scene format=3 uid="uid://bkjl27wc64e0v"]
+
+[node name="ACGWidget" type="Control"]
+custom_minimum_size = Vector2(192, 224)
+layout_mode = 3
+anchor_right = 0.166667
+anchor_bottom = 0.345679
+metadata/_edit_use_anchors_ = true
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 0.857143
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 4
+metadata/_edit_use_anchors_ = true
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.857143
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "MATERIAL"
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 3
+metadata/_edit_use_anchors_ = true

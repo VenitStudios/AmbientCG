@@ -1,0 +1,131 @@
+[gd_scene load_steps=4 format=3 uid="uid://dfrcr8snmmxal"]
+
+[ext_resource type="Texture2D" uid="uid://be7bfntarygtk" path="res://icon.svg" id="1_k5w7h"]
+[ext_resource type="Script" path="res://addons/ambientcg/download_panel.gd" id="1_n6dyb"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1yckh"]
+bg_color = Color(0.141176, 0.141176, 0.141176, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0.188235, 0.188235, 0.188235, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="DownloadWidget" type="Control"]
+custom_minimum_size = Vector2(320, 192)
+layout_mode = 3
+anchor_right = 0.277778
+anchor_bottom = 0.296296
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_n6dyb")
+metadata/_edit_use_anchors_ = true
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1yckh")
+
+[node name="Icon" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.025
+anchor_top = 0.125
+anchor_right = 0.425
+anchor_bottom = 0.791667
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_k5w7h")
+expand_mode = 1
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
+
+[node name="Title" type="Label" parent="."]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 2
+anchor_left = 0.025
+anchor_right = 0.8
+anchor_bottom = 0.125
+text = "Material  Name"
+vertical_alignment = 1
+text_overrun_behavior = 3
+metadata/_edit_use_anchors_ = true
+
+[node name="Cancel" type="Button" parent="."]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+anchor_left = 0.025
+anchor_top = 0.833334
+anchor_right = 0.425
+anchor_bottom = 1.0
+text = "Cancel
+"
+flat = true
+metadata/_edit_use_anchors_ = true
+
+[node name="ACGLink" type="Button" parent="."]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+anchor_left = 0.575
+anchor_top = 0.833334
+anchor_right = 0.975
+anchor_bottom = 1.0
+text = "AmbientCG"
+flat = true
+metadata/_edit_use_anchors_ = true
+
+[node name="DownloadOptions" type="GridContainer" parent="."]
+custom_minimum_size = Vector2(136, 0)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.55
+anchor_top = 0.208333
+anchor_right = 0.975
+anchor_bottom = 0.791667
+theme_override_constants/h_separation = 5
+theme_override_constants/v_separation = 5
+columns = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="1K-JPG" type="Button" parent="DownloadOptions"]
+custom_minimum_size = Vector2(64, 32)
+layout_mode = 2
+text = "1K-JPG"
+
+[node name="1K-PNG" type="Button" parent="DownloadOptions"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "1K-PNG"
+
+[node name="2K-JPG" type="Button" parent="DownloadOptions"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "2K-JPG"
+
+[node name="2K-PNG" type="Button" parent="DownloadOptions"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "2K-PNG"
+
+[node name="4K-JPG" type="Button" parent="DownloadOptions"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "4K-JPG"
+
+[node name="4K-PNG" type="Button" parent="DownloadOptions"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "4K-PNG"
+
+[connection signal="pressed" from="Cancel" to="." method="_on_cancel_pressed"]
+[connection signal="pressed" from="ACGLink" to="." method="_on_acg_link_pressed"]
