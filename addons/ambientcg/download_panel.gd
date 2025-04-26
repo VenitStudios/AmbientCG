@@ -24,62 +24,74 @@ func download(version):
 	download.request_raw(download_url)
 	var data : PackedByteArray = await download.request_completed
 	download.queue_free()
-	extract(path)
-	
+	extract(path, file_name)
+
 	downloading = false
-	
+
 	_on_cancel_pressed()
 
 
-func extract(zip_file : String):
+func extract(zip_file: String, file_name: String):
 	prints("Extracting", zip_file)
 	var ZR = ZIPReader.new()
 	ZR.open(zip_file)
-	
-	# this is bad code, i dont know how to regex 
+
+	# this is bad code, i dont know how to regex
 	var extract_path = ProjectSettings.get_setting("ambientcg/download_path") + "/" + zip_file.get_file().trim_suffix("." + zip_file.get_extension()).replace("ambient_cg_", "").replace("_download", "")
-	
 	if not DirAccess.dir_exists_absolute(extract_path): DirAccess.make_dir_recursive_absolute(extract_path)
-	
+
 	for file in ZR.get_files():
 		var data = ZR.read_file(file)
 		var path = extract_path + "/" + file
-		
+
 		var filesys = FileAccess.open(path, FileAccess.WRITE)
 		filesys.store_buffer(data)
 		filesys.close()
-	
+
 	prints("Extracted", zip_file)
 	download_finished.emit()
-	
-	create_material(extract_path)
-	
+
+	create_material(extract_path, file_name)
+
 	DirAccess.remove_absolute(zip_file)
 
-func create_material(directory):
+func create_material(directory, file_name: String):
 	print("Creating Material")
 	var new_material = StandardMaterial3D.new()
 	var files = DirAccess.get_files_at(directory)
+	var albedo_filename = ""
 	for file in files:
 		file = directory + "/" + file
-		if file.contains("Color"): 
+		if file.contains("Color"):
 			new_material.albedo_texture = ImageTexture.create_from_image(Image.load_from_file(file))
-		
-		if file.contains("Displacement"): 
+			albedo_filename = file.get_basename()
+		if file.contains("Displacement"):
 			new_material.heightmap_enabled = true
 			new_material.heightmap_texture = ImageTexture.create_from_image(Image.load_from_file(file))
-		
+
 		if file.contains("NormalGL"):
 			new_material.normal_enabled = true
 			new_material.normal_texture = ImageTexture.create_from_image(Image.load_from_file(file))
-		
+
 		if file.contains("Roughness"):
 			new_material.roughness_texture = ImageTexture.create_from_image(Image.load_from_file(file))
-	
+		if file.contains("AmbientOcclusion"):
+			new_material.ao_texture = ImageTexture.create_from_image(Image.load_from_file(file))
 	if new_material.albedo_texture:
-		ResourceSaver.save(new_material, directory + "/material.tres")
-		print("Saved Material", directory + "/material.tres")
-	
+		var save_path = ""
+		if albedo_filename.is_empty():
+			save_path = directory + "/fallback-name.tres"
+		else:
+			save_path = directory.path_join(file_name) + ".material"
+		var uid: int = ResourceUID.create_id()
+		ResourceSaver.save(new_material, save_path)
+		ResourceUID.set_id(uid, save_path)
+		ResourceSaver.get_resource_id_for_path(save_path, true)
+		print("Saved Material ", save_path)
+
+		EditorInterface.get_resource_filesystem().update_file(save_path)
+		EditorInterface.get_resource_filesystem().scan()
+
 
 func _on_cancel_pressed() -> void: if not downloading: self.queue_free()
 func _on_acg_link_pressed() -> void: OS.shell_open(url)

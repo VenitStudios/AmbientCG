@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://dfrcr8snmmxal"]
 
-[ext_resource type="Texture2D" uid="uid://be7bfntarygtk" path="res://icon.svg" id="1_k5w7h"]
-[ext_resource type="Script" path="res://addons/ambientcg/download_panel.gd" id="1_n6dyb"]
+[ext_resource type="Texture2D" uid="uid://ddoyf47ke1aiw" path="res://icon.svg" id="1_k5w7h"]
+[ext_resource type="Script" uid="uid://dhs7ioi37elkg" path="res://addons/ambientcg/download_panel.gd" id="1_n6dyb"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1yckh"]
 bg_color = Color(0.141176, 0.141176, 0.141176, 1)

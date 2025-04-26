@@ -20,7 +20,9 @@ func self_visibility_changed():
 		delete_all_items()
 
 func delete_all_items():
-	for c in get_node("ScrollContainer/GridContainer").get_children():
+	var grid: GridContainer = get_node("ScrollContainer/GridContainer")
+	for c in grid.get_children():
+		grid.remove_child(c)
 		c.queue_free()
 	if is_instance_valid(active_download_panel):
 		active_download_panel.queue_free()
@@ -38,8 +40,9 @@ func request_for_key_words():
 	HTTP.request(search_url.replace("{keywords}", get_node("%Search").text), [], HTTPClient.METHOD_GET, "")
 	var request_completion_data = await(HTTP.request_completed)
 	var utf8_body = request_completion_data[3]
+	remove_child(HTTP)
 	HTTP.queue_free()
-	
+
 	var parsed_data : Dictionary = return_parsed_xml(utf8_body)
 	create_widgets_from(parsed_data)
 
@@ -52,45 +55,46 @@ func create_widgets_from(parsed_data):
 func create_widget(widget_name, widget_icon_path, widget_page):
 	if not visible: return
 	var new_widget = ACG_MATERIAL_WIDGET.instantiate()
-	get_node("ScrollContainer/GridContainer").add_child(new_widget)
-	
+	var grid_container = get_node("ScrollContainer/GridContainer")
+	grid_container.add_child(new_widget)
+
 	var download = HTTPRequest.new()
-	
 	add_child(download)
-	
+
 	download.request_raw(widget_icon_path)
 	var data = await download.request_completed
 	var image = Image.new()
-	
 	var error = image.load_jpg_from_buffer(data[3])
-	
+
 	if error == OK:
+		remove_child(download)
 		download.queue_free()
-		
 		new_widget.get_node("TextureRect").texture = ImageTexture.create_from_image(image)
 		new_widget.get_node("Label").text = widget_name
 		new_widget.get_node("Button").pressed.connect(pop_up.bind(widget_page, new_widget))
-	else: 
+	else:
 		print("failed to load thumbnail, removing.")
+		grid_container.remove_child(new_widget)
 		new_widget.queue_free()
 
 func pop_up(widget_page, widget):
 	if is_instance_valid(active_download_panel) and not active_download_panel.downloading:
+		remove_child(active_download_panel)
 		active_download_panel.queue_free()
 		active_download_panel = null
-	
+
 	if not is_instance_valid(active_download_panel):
 		active_download_panel = DOWNLOAD_PANEL.instantiate()
 		add_child(active_download_panel)
 		active_download_panel.url = widget_page
-		
+
 		active_download_panel.position = get_rect().size / 2 - Vector2(active_download_panel.size / 2)
 		active_download_panel.get_node("Icon").texture = widget.get_node("TextureRect").texture
 		active_download_panel.get_node("Title").text = widget.get_node("Label").text
 		active_download_panel.download_finished.connect(download_finished)
 
 func download_finished():
-	if plugin:
+	if plugin and Engine.is_editor_hint():
 		plugin.get_editor_interface().get_resource_filesystem().scan_sources()
 
 func return_parsed_xml(xml : PackedByteArray) -> Dictionary:
@@ -104,6 +108,6 @@ func return_parsed_xml(xml : PackedByteArray) -> Dictionary:
 			var attributes_dict = {}
 			for idx in range(parser.get_attribute_count()):
 				attributes_dict[parser.get_attribute_name(idx)] = parser.get_attribute_value(idx)
-				if attributes_dict.has("src"):
+				if attributes_dict.has("src") and attributes_dict.has("alt"):
 					final_dict[str(attributes_dict.alt).replace("Asset: ", "")] = attributes_dict.src
 	return final_dict

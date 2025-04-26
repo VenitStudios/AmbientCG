@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://xkfv4a3chdfy"]
 
-[ext_resource type="Script" path="res://addons/ambientcg/acg_ui.gd" id="1_qff10"]
+[ext_resource type="Script" uid="uid://28aukqk27i52" path="res://addons/ambientcg/acg_ui.gd" id="1_qff10"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8sd2u"]
 bg_color = Color(0.141176, 0.141176, 0.141176, 1)
