@@ -109,7 +109,6 @@ func create_material(directory, file_name: String):
 		var uid: int = ResourceUID.create_id()
 		ResourceSaver.save(new_material, save_path)
 		ResourceUID.set_id(uid, save_path)
-		#ResourceFormatSaver.set_uid._set_uid()
 		ResourceSaver.get_resource_id_for_path(save_path, true)
 		print("Saved Material ", save_path)
 
