@@ -6,9 +6,11 @@ const UI = preload("res://addons/ambientcg/acg_ui.tscn")
 var ui_instance
 
 func _enter_tree():
+	if not Engine.is_editor_hint():
+		return
 	if not ProjectSettings.has_setting("ambientcg/download_path"):
 		ProjectSettings.set_setting("ambientcg/download_path", "res://AmbientCG/Downloads")
-	
+
 	ui_instance = UI.instantiate()
 	EditorInterface.get_editor_main_screen().add_child(ui_instance)
 	ui_instance.plugin = self
@@ -17,6 +19,7 @@ func _enter_tree():
 
 func _exit_tree():
 	if ui_instance:
+		EditorInterface.get_editor_main_screen().remove_child(ui_instance)
 		ui_instance.queue_free()
 
 
@@ -25,7 +28,7 @@ func _has_main_screen():
 
 
 func _make_visible(visible):
-	if ui_instance: 
+	if ui_instance:
 		ui_instance.visible = visible
 
 
