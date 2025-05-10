@@ -6,8 +6,11 @@ var url : String
 var downloading : bool = false
 
 signal download_finished
+@onready var override_material_save_path = ProjectSettings.get_setting("ambientcg/material_file_directory","")
 
 func _ready() -> void:
+	if not ProjectSettings.has_setting("ambientcg/material_file_directory"):
+		ProjectSettings.set_setting("ambientcg/material_file_directory","")
 	for c in $DownloadOptions.get_children():
 		if c is Button:
 			c.pressed.connect(download.bind(c))
@@ -55,6 +58,13 @@ func extract(zip_file: String, file_name: String):
 
 	DirAccess.remove_absolute(zip_file)
 
+func await_for_reimport():
+	var editor_fs: EditorFileSystem = EditorInterface.get_resource_filesystem()
+	while not is_equal_approx(1.0, editor_fs.get_scanning_progress()) and editor_fs.is_scanning():
+		var progress = editor_fs.get_scanning_progress()
+		print("Waiting for initial file import progress: ", progress)
+		await get_tree().create_timer(1.0).timeout
+
 func create_material(directory, file_name: String):
 	print("Creating Material")
 	var editor_fs: EditorFileSystem = EditorInterface.get_resource_filesystem()
@@ -76,17 +86,17 @@ func create_material(directory, file_name: String):
 	for file in valid_files:
 		editor_fs.update_file(file)
 	await get_tree().process_frame
-
-	while not is_equal_approx(1.0, editor_fs.get_scanning_progress()) and editor_fs.is_scanning():
-		var progress = editor_fs.get_scanning_progress()
-		print("Waiting for initial file import progress: ", progress)
-		await get_tree().create_timer(1.0).timeout
-
+	await await_for_reimport()
 
 	var albedo_filename = ""
 	for file in valid_files:
 		if file.contains("Color"):
 			new_material.albedo_texture = load(file)
+			if not override_material_save_path.is_empty():
+				var new_path: String = override_material_save_path.path_join(file_name) +"."+ file.get_extension()
+				DirAccess.copy_absolute(file, new_path)
+				editor_fs.update_file(new_path)
+				await await_for_reimport()
 			albedo_filename = file.get_basename()
 		if file.contains("Displacement"):
 			new_material.heightmap_enabled = true
@@ -104,16 +114,18 @@ func create_material(directory, file_name: String):
 		var save_path = ""
 		if albedo_filename.is_empty():
 			save_path = directory + "/fallback-name.tres"
+		elif not override_material_save_path.is_empty():
+			save_path = override_material_save_path.path_join(file_name) + ".material"
 		else:
 			save_path = directory.path_join(file_name) + ".material"
 		var uid: int = ResourceUID.create_id()
 		ResourceSaver.save(new_material, save_path)
 		ResourceUID.set_id(uid, save_path)
+
 		ResourceSaver.get_resource_id_for_path(save_path, true)
 		print("Saved Material ", save_path)
 
 		EditorInterface.get_resource_filesystem().update_file(save_path)
-		EditorInterface.get_resource_filesystem().scan()
 		EditorInterface.get_resource_filesystem().scan_sources()
 		EditorInterface.get_resource_filesystem().scan()
 
