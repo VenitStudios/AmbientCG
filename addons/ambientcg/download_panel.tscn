@@ -1,48 +1,52 @@
-[gd_scene load_steps=4 format=3 uid="uid://dfrcr8snmmxal"]
+[gd_scene load_steps=6 format=3 uid="uid://dfrcr8snmmxal"]
 
-[ext_resource type="Texture2D" uid="uid://ddoyf47ke1aiw" path="res://icon.svg" id="1_k5w7h"]
+[ext_resource type="Texture2D" uid="uid://be7bfntarygtk" path="res://icon.svg" id="1_k5w7h"]
 [ext_resource type="Script" uid="uid://dhs7ioi37elkg" path="res://addons/ambientcg/download_panel.gd" id="1_n6dyb"]
+[ext_resource type="Script" uid="uid://cn4gehailmkwg" path="res://addons/ambientcg/download_window.gd" id="1_yby7p"]
+[ext_resource type="Script" uid="uid://dc6nvcqhqblh4" path="res://addons/ambientcg/TmakerBG.gd" id="3_my73g"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1yckh"]
-bg_color = Color(0.141176, 0.141176, 0.141176, 1)
-border_width_left = 8
-border_width_top = 8
-border_width_right = 8
-border_width_bottom = 8
-border_color = Color(0.188235, 0.188235, 0.188235, 1)
-border_blend = true
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2yn7l"]
+bg_color = Color(0.509804, 0.435294, 1, 1)
 
-[node name="DownloadWidget" type="Control"]
+[node name="DownloadWindow" type="Window"]
+title = "Test Window"
+initial_position = 4
+size = Vector2i(560, 280)
+script = ExtResource("1_yby7p")
+
+[node name="DownloadWidget" type="Control" parent="."]
 custom_minimum_size = Vector2(320, 192)
 layout_mode = 3
-anchor_right = 0.277778
-anchor_bottom = 0.296296
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("1_n6dyb")
-metadata/_edit_use_anchors_ = true
-
-[node name="Panel" type="Panel" parent="."]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_1yckh")
+script = ExtResource("1_n6dyb")
+metadata/_edit_use_anchors_ = true
 
-[node name="Icon" type="TextureRect" parent="."]
+[node name="TMakerBG" type="ColorRect" parent="DownloadWidget"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -0.000366211
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.135294, 0.135294, 0.135294, 1.5)
+script = ExtResource("3_my73g")
+multiplier = 1.5
+metadata/_custom_type_script = "uid://dc6nvcqhqblh4"
+
+[node name="Icon" type="TextureRect" parent="DownloadWidget"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(128, 128)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.025
-anchor_top = 0.125
-anchor_right = 0.425
-anchor_bottom = 0.791667
+anchor_left = 0.1
+anchor_top = 0.257143
+anchor_right = 0.328571
+anchor_bottom = 0.714286
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("1_k5w7h")
@@ -50,82 +54,147 @@ expand_mode = 1
 stretch_mode = 5
 metadata/_edit_use_anchors_ = true
 
-[node name="Title" type="Label" parent="."]
-custom_minimum_size = Vector2(128, 0)
-layout_mode = 2
-anchor_left = 0.025
-anchor_right = 0.8
-anchor_bottom = 0.125
-text = "Material  Name"
-vertical_alignment = 1
-text_overrun_behavior = 3
-metadata/_edit_use_anchors_ = true
-
-[node name="Cancel" type="Button" parent="."]
+[node name="Cancel" type="Button" parent="DownloadWidget"]
 custom_minimum_size = Vector2(0, 32)
-layout_mode = 2
-anchor_left = 0.025
-anchor_top = 0.833334
-anchor_right = 0.425
-anchor_bottom = 1.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0428571
+anchor_top = 0.828571
+anchor_right = 0.385714
+anchor_bottom = 0.942857
 text = "Cancel
 "
-flat = true
 metadata/_edit_use_anchors_ = true
 
-[node name="ACGLink" type="Button" parent="."]
+[node name="ACGLink" type="Button" parent="DownloadWidget"]
 custom_minimum_size = Vector2(0, 32)
-layout_mode = 2
-anchor_left = 0.575
-anchor_top = 0.833334
-anchor_right = 0.975
-anchor_bottom = 1.0
-text = "AmbientCG"
-flat = true
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.828571
+anchor_right = 0.957143
+anchor_bottom = 0.942857
+text = "Open Material on AmbientCG"
 metadata/_edit_use_anchors_ = true
 
-[node name="DownloadOptions" type="GridContainer" parent="."]
+[node name="DownloadOptions" type="GridContainer" parent="DownloadWidget"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(136, 0)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.55
-anchor_top = 0.208333
-anchor_right = 0.975
-anchor_bottom = 0.791667
-theme_override_constants/h_separation = 5
-theme_override_constants/v_separation = 5
+anchor_left = 0.5
+anchor_top = 0.285714
+anchor_right = 0.957143
+anchor_bottom = 0.714286
+theme_override_constants/h_separation = 32
+theme_override_constants/v_separation = 8
 columns = 2
 metadata/_edit_use_anchors_ = true
 
-[node name="1K-JPG" type="Button" parent="DownloadOptions"]
-custom_minimum_size = Vector2(64, 32)
+[node name="1K-JPG" type="Button" parent="DownloadWidget/DownloadOptions"]
+custom_minimum_size = Vector2(96, 32)
 layout_mode = 2
 text = "1K-JPG"
 
-[node name="1K-PNG" type="Button" parent="DownloadOptions"]
-custom_minimum_size = Vector2(0, 32)
+[node name="1K-PNG" type="Button" parent="DownloadWidget/DownloadOptions"]
+custom_minimum_size = Vector2(96, 32)
 layout_mode = 2
 text = "1K-PNG"
 
-[node name="2K-JPG" type="Button" parent="DownloadOptions"]
-custom_minimum_size = Vector2(0, 32)
+[node name="2K-JPG" type="Button" parent="DownloadWidget/DownloadOptions"]
+custom_minimum_size = Vector2(96, 32)
 layout_mode = 2
 text = "2K-JPG"
 
-[node name="2K-PNG" type="Button" parent="DownloadOptions"]
-custom_minimum_size = Vector2(0, 32)
+[node name="2K-PNG" type="Button" parent="DownloadWidget/DownloadOptions"]
+custom_minimum_size = Vector2(96, 32)
 layout_mode = 2
 text = "2K-PNG"
 
-[node name="4K-JPG" type="Button" parent="DownloadOptions"]
-custom_minimum_size = Vector2(0, 32)
+[node name="4K-JPG" type="Button" parent="DownloadWidget/DownloadOptions"]
+custom_minimum_size = Vector2(96, 32)
 layout_mode = 2
 text = "4K-JPG"
 
-[node name="4K-PNG" type="Button" parent="DownloadOptions"]
-custom_minimum_size = Vector2(0, 32)
+[node name="4K-PNG" type="Button" parent="DownloadWidget/DownloadOptions"]
+custom_minimum_size = Vector2(96, 32)
 layout_mode = 2
 text = "4K-PNG"
 
-[connection signal="pressed" from="Cancel" to="." method="_on_cancel_pressed"]
-[connection signal="pressed" from="ACGLink" to="." method="_on_acg_link_pressed"]
+[node name="Label" type="Label" parent="DownloadWidget"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.171429
+anchor_right = 0.957143
+anchor_bottom = 0.257143
+text = "Downloads"
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="MakeMaterialCheck" type="CheckBox" parent="DownloadWidget"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.714286
+anchor_right = 0.957143
+anchor_bottom = 0.828571
+button_pressed = true
+text = "Make Material"
+alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="DownloadVisualizer" type="ColorRect" parent="DownloadWidget"]
+unique_name_in_owner = true
+visible = false
+self_modulate = Color(1, 1, 1, 0.588235)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -0.000366211
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.135294, 0.135294, 0.135294, 1.5)
+script = ExtResource("3_my73g")
+multiplier = 1.5
+metadata/_custom_type_script = "uid://dc6nvcqhqblh4"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="DownloadWidget/DownloadVisualizer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+alignment = 1
+
+[node name="DownloadLabel" type="Label" parent="DownloadWidget/DownloadVisualizer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "DOWNLOADING"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="FileDownloadLink" type="Label" parent="DownloadWidget/DownloadVisualizer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="FileDownloadPath" type="Label" parent="DownloadWidget/DownloadVisualizer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="DownloadProgress" type="ProgressBar" parent="DownloadWidget/DownloadVisualizer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_styles/fill = SubResource("StyleBoxFlat_2yn7l")
+metadata/_edit_use_anchors_ = true
+
+[connection signal="close_requested" from="." to="." method="_on_close_requested"]
+[connection signal="pressed" from="DownloadWidget/Cancel" to="DownloadWidget" method="_on_cancel_pressed"]
+[connection signal="pressed" from="DownloadWidget/ACGLink" to="DownloadWidget" method="_on_acg_link_pressed"]
