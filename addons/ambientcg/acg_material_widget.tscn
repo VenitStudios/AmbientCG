@@ -1,17 +1,6 @@
-[gd_scene load_steps=10 format=3 uid="uid://bkjl27wc64e0v"]
+[gd_scene load_steps=8 format=3 uid="uid://bkjl27wc64e0v"]
 
 [ext_resource type="Script" uid="uid://dc6nvcqhqblh4" path="res://addons/ambientcg/TmakerBG.gd" id="1_kikqt"]
-
-[sub_resource type="Shader" id="Shader_tg116"]
-code = "
-	shader_type canvas_item; uniform vec3 remove_color : source_color; uniform vec3 replace_color : source_color;
-	void fragment() { if (distance(COLOR.rgb, remove_color) < 0.03) COLOR.rgb = replace_color; }
-	"
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_q2tmk"]
-shader = SubResource("Shader_tg116")
-shader_parameter/remove_color = Color(0.141176, 0.141176, 0.141176, 1)
-shader_parameter/replace_color = Color(0.112745, 0.112745, 0.112745, 1.25)
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_tg116"]
 load_path = "res://.godot/imported/Asphalt031.jpg-595c12a56d03d3bb8a08ead11b552f78.ctex"
@@ -64,7 +53,6 @@ theme_override_constants/separation = 0
 
 [node name="TextureIcon" type="TextureRect" parent="VBoxContainer"]
 unique_name_in_owner = true
-material = SubResource("ShaderMaterial_q2tmk")
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
