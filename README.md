@@ -1,17 +1,16 @@
-# AmbientCG Download Tool
+# AmbientCG Material Download Plugin
 
-Downloader Tool For Godot 4.3 (Built in godot 4.3, tested in godot 4.5 too and works fine, might work in earlier versions)
+AmbientCG Downloader Editor Plugin For Godot 4.x
+Downloads Files from AmbientCG.com and automatically populates StandardMaterial3D*
 
-Downloads Files from AmbientCG.com, Converts it to a material (assuming the file names are correct, this is an AmbientCG requirement)
+# Easy to Search and Download PBR Surfaces
 
-# Easily search for whatever you need
+![godot_plugin_a](https://github.com/user-attachments/assets/8158dcb9-888a-448b-ab95-9815ee1fd8ad)
 
-<img width="812" alt="Screenshot 2025-05-10 at 20 44 39" src="https://github.com/user-attachments/assets/edf39e3b-32d8-4ec5-a1b3-9b39c1b0ad24" />
+# Simple to use Automatic Material Population
 
-# Simple organisation of the downloaded materials
+![godot_plugin_e](https://github.com/user-attachments/assets/df1bb780-6c91-48f4-bde4-b340ca57454a) ![godot_plugin_c](https://github.com/user-attachments/assets/45392721-0bd4-413f-9372-117cdcd12aae)
 
-<img width="393" alt="Screenshot 2025-05-10 at 20 45 28" src="https://github.com/user-attachments/assets/5501e0ff-7afc-4e15-8796-d43638946d8e" />
+# Developer Notes
 
-# Maps most fields automatically
-
-<img width="300" alt="Screenshot 2025-05-10 at 20 45 56" src="https://github.com/user-attachments/assets/d1718b41-2f2d-44eb-aebb-1ba862ab62ed" />
+- Substance Materials **DO NOT** download properly, they are ignored by the material browser. This may change later on.
