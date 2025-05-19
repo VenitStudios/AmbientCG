@@ -8,6 +8,7 @@
 # Developer Notes
 
   - Substance Materials **DO NOT** download properly, they are ignored by the material browser. This may change later on.
+  - You can Change the Download Path in Project Settings under "ambientcg/download_path"
 
 # Easy to Search and Download PBR Surfaces
 
