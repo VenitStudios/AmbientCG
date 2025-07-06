@@ -11,6 +11,8 @@ func _enter_tree():
 		return
 	if not ProjectSettings.has_setting("ambientcg/download_path"):
 		ProjectSettings.set_setting("ambientcg/download_path", "res://AmbientCG/Downloads")
+	if not ProjectSettings.has_setting("ambientcg/make_materials_triplanar"):
+		ProjectSettings.set_setting("ambientcg/make_materials_triplanar", false)
 	editor_theme = EditorInterface.get_editor_theme()
 	ui_instance = UI.instantiate()
 	EditorInterface.get_editor_main_screen().add_child(ui_instance)

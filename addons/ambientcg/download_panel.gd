@@ -73,9 +73,11 @@ func extract(zip_file: String, file_name: String):
 	var ZR = ZIPReader.new()
 	ZR.open(zip_file)
 
-	# this is bad code, i dont know how to regex
-	var extract_path = ProjectSettings.get_setting("ambientcg/download_path") + "/" + zip_file.get_file().trim_suffix("." + zip_file.get_extension()).replace("ambient_cg_", "").replace("_download", "")
-	if not DirAccess.dir_exists_absolute(extract_path): DirAccess.make_dir_recursive_absolute(extract_path)
+	# Extract folder name from zip file
+	var folder_name = zip_file.get_file().get_basename().replace("ambient_cg_", "").replace("_download", "")
+	var extract_path = ProjectSettings.get_setting("ambientcg/download_path").path_join(folder_name)
+	if not DirAccess.dir_exists_absolute(extract_path): 
+		DirAccess.make_dir_recursive_absolute(extract_path)
 	
 	%DownloadLabel.text = "Extracting"
 	%FileDownloadLink.text = "from: " + zip_file
@@ -152,11 +154,18 @@ func create_material(directory, file_name: String):
 		if file.containsn("NormalGL"):
 			new_material.normal_enabled = true
 			new_material.normal_texture = load(file)
+			
+		if file.containsn("NormalDX"):
+			DirAccess.remove_absolute(file)
 
 		if file.containsn("Roughness"):
 			new_material.roughness_texture = load(file)
 		if file.containsn("AmbientOcclusion"):
 			new_material.ao_texture = load(file)
+	
+	if ProjectSettings.get_setting("ambientcg/make_materials_triplanar"):
+		new_material.uv1_triplanar = true
+	
 	if new_material.albedo_texture:
 		var save_path = ""
 		if albedo_filename.is_empty():
