@@ -1,6 +1,5 @@
-[gd_scene load_steps=6 format=3 uid="uid://dfrcr8snmmxal"]
+[gd_scene load_steps=5 format=3 uid="uid://dfrcr8snmmxal"]
 
-[ext_resource type="Texture2D" uid="uid://be7bfntarygtk" path="res://icon.svg" id="1_k5w7h"]
 [ext_resource type="Script" uid="uid://dhs7ioi37elkg" path="res://addons/ambientcg/download_panel.gd" id="1_n6dyb"]
 [ext_resource type="Script" uid="uid://cn4gehailmkwg" path="res://addons/ambientcg/download_window.gd" id="1_yby7p"]
 [ext_resource type="Script" uid="uid://dc6nvcqhqblh4" path="res://addons/ambientcg/TmakerBG.gd" id="3_my73g"]
@@ -33,7 +32,7 @@ anchor_bottom = 1.0
 offset_right = -0.000366211
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.135294, 0.135294, 0.135294, 1.5)
+color = Color(0.195, 0.195, 0.195, 1.5)
 script = ExtResource("3_my73g")
 multiplier = 1.5
 metadata/_custom_type_script = "uid://dc6nvcqhqblh4"
@@ -49,7 +48,6 @@ anchor_right = 0.328571
 anchor_bottom = 0.714286
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("1_k5w7h")
 expand_mode = 1
 stretch_mode = 5
 metadata/_edit_use_anchors_ = true
@@ -157,7 +155,7 @@ offset_right = -0.000366211
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.135294, 0.135294, 0.135294, 1.5)
+color = Color(0.195, 0.195, 0.195, 1.5)
 script = ExtResource("3_my73g")
 multiplier = 1.5
 metadata/_custom_type_script = "uid://dc6nvcqhqblh4"
