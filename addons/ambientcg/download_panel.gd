@@ -11,7 +11,7 @@ var downloading : bool = false
 const ALLOWED_FILE_TYPES = ["zip", "exr"]
 
 signal download_finished
-@onready var override_material_save_path = ProjectSettings.get_setting("ambientcg/material_file_directory","")
+@onready var override_material_save_path = ProjectSettings.get_setting("ambientcg/material_file_directory", "res://AmbientCG/Materials")
 
 func _ready() -> void:
 	if not ProjectSettings.has_setting("ambientcg/material_file_directory"):
@@ -32,7 +32,6 @@ func get_information():
 	var json : Dictionary = JSON.parse_string(utf8_body)
 	if !json.is_empty():
 		parse_download_options(json)
-
 
 func parse_download_options(download_json : Dictionary) -> void:
 	get_node_or_null("%GettingDownloads").text = "Fetching Downloads...\nThis May Take a Moment"
@@ -114,7 +113,7 @@ func download_environment(download_url : String, version : String, extension : S
 			download_size = header_val.replacen("content-length: ", "").to_int()
 	
 	header_getter.queue_free()
-	var directory = ProjectSettings.get_setting("ambientcg/environment_file_directory")
+	var directory = ProjectSettings.get_setting("ambientcg/environment_file_directory", "res://AmbientCG/Environments")
 	if not DirAccess.dir_exists_absolute(directory): DirAccess.make_dir_recursive_absolute(directory)
 	var path = directory.trim_suffix("/") + "/ambient_cg_%s%s_download.%s" % [file_name, version.to_upper(), extension]
 	
@@ -135,26 +134,33 @@ func download_environment(download_url : String, version : String, extension : S
 	var last_byte_count = 0
 	var attempt_count = 0
 	
-	while bytes_left > 0: 
+	while bytes_left > 0:
+		%DownloadLabel.text = "Downloading %s/%sMB" % [float(download.get_downloaded_bytes() / 1000000), float(download_size / 1000000)]
+		
 		bytes_left = download_size - download.get_downloaded_bytes()
 		%DownloadProgress.value = download.get_downloaded_bytes()
 		await get_tree().create_timer(0.1).timeout
 		if last_byte_count == bytes_left:
 			attempt_count += 1
 			if attempt_count > 20:
-				await download_failed("Download Hung at %s Bytes left" % bytes_left)
+				await download_failed("Download Hung at %sMB" % (last_byte_count / 1000000))
 				download.queue_free()
 				downloading = false
 				break
 		else:
 			attempt_count = 0
 			last_byte_count = bytes_left
+		
+		
 	
 	download.queue_free()
 	downloading = false
 	
 	await get_tree().create_timer(1).timeout
-	await make_sky_environment(path)
+	if %PopulateResourceCheck.button_pressed:
+		await make_sky_environment(path)
+	downloading = false
+	_on_cancel_pressed()
 
 func download_material(download_url : String, version : String, extension : String):
 	var file_name = id
@@ -204,13 +210,16 @@ func download_material(download_url : String, version : String, extension : Stri
 		if last_byte_count == bytes_left:
 			attempt_count += 1
 			if attempt_count > 20:
-				await download_failed("Download Hung at %s Bytes left" % bytes_left)
+				await download_failed("Download Hung at %sMB" % (last_byte_count / 1000000))
 				download.queue_free()
 				downloading = false
 				break
 		else:
 			attempt_count = 0
 			last_byte_count = bytes_left
+		
+		%DownloadLabel.text = "Downloading %s/%sMB" % [float(download.get_downloaded_bytes() / 1000000), float(download_size / 1000000)]
+		
 	
 	download.queue_free()
 	
@@ -231,7 +240,7 @@ func extract(zip_file: String, file_name: String):
 	var ZR = ZIPReader.new()
 	ZR.open(zip_file)
 	# this is bad code, i dont know how to regex - cslr
-	var extract_path = ProjectSettings.get_setting("ambientcg/download_path") + "/" + zip_file.get_file().trim_suffix("." + zip_file.get_extension()).replace("ambient_cg_", "").replace("_download", "")
+	var extract_path = ProjectSettings.get_setting("ambientcg/extract_path", "res://AmbientCG/Downloads") + "/" + zip_file.get_file().trim_suffix("." + zip_file.get_extension()).replace("ambient_cg_", "").replace("_download", "")
 	if not DirAccess.dir_exists_absolute(extract_path): DirAccess.make_dir_recursive_absolute(extract_path)
 	
 	%DownloadLabel.text = "Extracting"
@@ -249,9 +258,10 @@ func extract(zip_file: String, file_name: String):
 
 	prints("Extracted", zip_file)
 	download_finished.emit()
-	if %MakeMaterialCheck.button_pressed:
+	if %PopulateResourceCheck.button_pressed:
 		await create_material(extract_path, file_name)
-
+	downloading = false
+	_on_cancel_pressed()
 	DirAccess.remove_absolute(zip_file)
 
 func await_for_reimport():
@@ -264,7 +274,7 @@ func await_for_reimport():
 func create_material(directory, file_name: String):
 	print("Creating Material")
 	
-	var material_path = ProjectSettings.get_setting("ambientcg/material_file_directory")
+	var material_path = ProjectSettings.get_setting("ambientcg/material_file_directory", "res://AmbientCG/Materials")
 	if not DirAccess.dir_exists_absolute(material_path): DirAccess.make_dir_recursive_absolute(material_path)
 	
 	%DownloadLabel.text = "Creating Material"
@@ -309,6 +319,9 @@ func create_material(directory, file_name: String):
 			new_material.heightmap_enabled = not new_material.uv1_triplanar
 			new_material.heightmap_texture = load(file)
 
+		if file.containsn("NormalDX"):
+			DirAccess.remove_absolute(file)
+
 		if file.containsn("NormalGL"):
 			new_material.normal_enabled = true
 			new_material.normal_texture = load(file)
@@ -334,12 +347,12 @@ func create_material(directory, file_name: String):
 		ResourceSaver.get_resource_id_for_path(save_path, true)
 		print("Saved Material ", save_path)
 
-		EditorInterface.get_resource_filesystem().update_file(save_path)
-		EditorInterface.get_resource_filesystem().scan_sources()
-		EditorInterface.get_resource_filesystem().scan()
+		editor_fs.update_file(save_path)
+		editor_fs.scan_sources()
+		editor_fs.scan()
 
 func make_sky_environment(source_file: String):
-	var directory = ProjectSettings.get_setting("ambientcg/environment_file_directory")
+	var directory = ProjectSettings.get_setting("ambientcg/environment_file_directory", "res://AmbientCG/Environments")
 	if not DirAccess.dir_exists_absolute(directory): DirAccess.make_dir_recursive_absolute(directory)
 	var editor_fs: EditorFileSystem = EditorInterface.get_resource_filesystem()
 	var new_material = StandardMaterial3D.new()
@@ -384,8 +397,7 @@ func make_sky_environment(source_file: String):
 		
 		ResourceSaver.get_resource_id_for_path(sky_save_path, true)
 		
-		EditorInterface.get_resource_filesystem().update_file(sky_save_path)
-		
+		editor_fs.update_file(sky_save_path)
 		
 		env.set_sky(load(sky_save_path))
 		
@@ -395,10 +407,10 @@ func make_sky_environment(source_file: String):
 		
 		ResourceSaver.get_resource_id_for_path(env_save_path, true)
 		
-		EditorInterface.get_resource_filesystem().update_file(env_save_path)
+		editor_fs.update_file(env_save_path)
 	
-	EditorInterface.get_resource_filesystem().scan_sources()
-	EditorInterface.get_resource_filesystem().scan()
+	editor_fs.scan_sources()
+	editor_fs.scan()
 	
 	downloading = false
 	_on_cancel_pressed()

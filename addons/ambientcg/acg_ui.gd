@@ -97,7 +97,7 @@ func create_widget(widget_name, widget_icon_path, widget_page):
 	if not visible: return
 	var new_widget = ACG_MATERIAL_WIDGET.instantiate()
 	var grid_container : GridContainer = get_node("ScrollContainer/GridContainer")
-	grid_container.columns = int(size.x / 192.0)
+	grid_container.columns = int((size.x - 40 + 8) / 200.0)
 	var download = HTTPRequest.new()
 	add_child(download)
 	
@@ -169,4 +169,4 @@ func return_parsed_xml(xml : PackedByteArray) -> Dictionary:
 
 func _on_self_resized() -> void:
 	var grid_container : GridContainer = get_node("ScrollContainer/GridContainer")
-	grid_container.columns = int(size.x / 192.0)
+	grid_container.columns = int((size.x - 40 + 8) / 200.0)

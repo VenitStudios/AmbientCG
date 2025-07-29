@@ -109,7 +109,7 @@ anchor_top = 0.0333333
 anchor_right = 0.957143
 anchor_bottom = 0.185714
 theme_override_font_sizes/font_size = 32
-text = "Download Options"
+text = "Downloads"
 vertical_alignment = 1
 metadata/_edit_use_anchors_ = true
 
@@ -123,11 +123,11 @@ anchor_bottom = 0.871429
 alignment = 1
 metadata/_edit_use_anchors_ = true
 
-[node name="MakeMaterialCheck" type="CheckBox" parent="DownloadWidget/HBoxContainer"]
+[node name="PopulateResourceCheck" type="CheckBox" parent="DownloadWidget/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 button_pressed = true
-text = "Make Material"
+text = "Populate Resource"
 alignment = 1
 metadata/_edit_use_anchors_ = true
 
