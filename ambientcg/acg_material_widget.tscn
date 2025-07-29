@@ -1,0 +1,85 @@
+[gd_scene load_steps=7 format=3 uid="uid://bkjl27wc64e0v"]
+
+[ext_resource type="Script" uid="uid://dc6nvcqhqblh4" path="res://addons/ambientcg/TmakerBG.gd" id="1_kikqt"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q2tmk"]
+bg_color = Color(0.6, 0.6, 0.6, 0.392157)
+draw_center = false
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.6, 0.6, 0.6, 0.392157)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2asen"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_1423s"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_v13hn"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_f0yl3"]
+
+[node name="ACGWidget" type="Control"]
+custom_minimum_size = Vector2(192, 224)
+layout_mode = 3
+anchor_right = 0.166667
+anchor_bottom = 0.345679
+metadata/_edit_use_anchors_ = true
+
+[node name="TMakerBG" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -0.00038147
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.188235, 0.188235, 0.188235, 1.5)
+script = ExtResource("1_kikqt")
+multiplier = 1.5
+metadata/_custom_type_script = "uid://dc6nvcqhqblh4"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="TextureIcon" type="TextureRect" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+text = "MATERIAL"
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 3
+metadata/_edit_use_anchors_ = true
+
+[node name="Button" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_default_cursor_shape = 2
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_q2tmk")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxFlat_q2tmk")
+theme_override_styles/hover = SubResource("StyleBoxFlat_q2tmk")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxEmpty_2asen")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_1423s")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_v13hn")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_f0yl3")

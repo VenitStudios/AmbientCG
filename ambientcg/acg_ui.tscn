@@ -1,0 +1,120 @@
+[gd_scene load_steps=6 format=3 uid="uid://xkfv4a3chdfy"]
+
+[ext_resource type="Script" uid="uid://28aukqk27i52" path="res://addons/ambientcg/acg_ui.gd" id="1_qff10"]
+[ext_resource type="Script" uid="uid://dc6nvcqhqblh4" path="res://addons/ambientcg/TmakerBG.gd" id="2_24p0g"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_24p0g"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(1, 0.365, 0.365, 1)
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_detail = 1
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_silpk"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2yn7l"]
+bg_color = Color(0.509804, 0.435294, 1, 1)
+
+[node name="ACGUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_qff10")
+
+[node name="TMakerBG" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.12549, 0.12549, 0.12549, 1)
+script = ExtResource("2_24p0g")
+metadata/_custom_type_script = "uid://dc6nvcqhqblh4"
+
+[node name="Search" type="LineEdit" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0555556
+anchor_top = 0.0493827
+anchor_right = 0.388889
+anchor_bottom = 0.0987654
+grow_horizontal = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_24p0g")
+placeholder_text = "SEARCH KEYWORDS ON AMBIENTCG"
+alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0138889
+anchor_top = 0.123457
+anchor_right = 0.986111
+anchor_bottom = 0.950617
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="GridContainer" type="GridContainer" parent="ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 6
+
+[node name="LoadProgress" type="ProgressBar" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.950617
+anchor_right = 1.0
+anchor_bottom = 0.975309
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/background = SubResource("StyleBoxEmpty_silpk")
+theme_override_styles/fill = SubResource("StyleBoxFlat_2yn7l")
+show_percentage = false
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="LoadProgress"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "LOADING..."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="NoResults" type="Label" parent="CenterContainer"]
+layout_mode = 2
+text = "NO RESULTS FOR \"%s\" FOUND"
+metadata/_edit_use_anchors_ = true
+
+[connection signal="resized" from="." to="." method="_on_self_resized"]
+[connection signal="text_submitted" from="Search" to="." method="search_submitted"]
