@@ -1,7 +1,7 @@
 @tool
 extends Control
 
-const search_url = "https://ambientcg.com/hx/asset-list?id=&childrenOf=&variationsOf=&parentsOf=&q={keywords}&colorMode=&thumbnails=200&sort=popular"
+const search_url = "https://ambientcg.com/hx/asset-list?q={keywords}&colorMode=&thumbnails=200&sort=popular"
 const ACG_MATERIAL_WIDGET = preload("res://addons/ambientcg/acg_material_widget.tscn")
 const DOWNLOAD_WINDOW = preload("res://addons/ambientcg/download_panel.tscn")
 
@@ -30,7 +30,9 @@ func _process(delta: float) -> void:
 	if (not visible) or (not active): return
 	if v_scroll_bar == null: v_scroll_bar = scroll_container.get_v_scroll_bar()
 	else:
-		var should_load_more = v_scroll_bar.value > v_scroll_bar.max_value * 0.8
+		
+		var current_y = v_scroll_bar.size.y + v_scroll_bar.value
+		var should_load_more = current_y > v_scroll_bar.max_value * 0.8
 		if should_load_more and not awaiting_response:
 			search_offset += 200
 			request_for_key_words(false)
