@@ -1,13 +1,13 @@
 @tool
 extends Control
 
-const search_url = "https://ambientCG.com/api/v2/full_json?type=Material&sort=Popular&q={keywords}"
+const search_url = "https://ambientcg.com/hx/asset-list?id=&childrenOf=&variationsOf=&parentsOf=&q={keywords}&colorMode=&thumbnails=200&sort=popular"
 const ACG_MATERIAL_WIDGET = preload("res://addons/ambientcg/acg_material_widget.tscn")
 const DOWNLOAD_WINDOW = preload("res://addons/ambientcg/download_panel.tscn")
 
 @onready var scroll_container: ScrollContainer = $ScrollContainer
 @onready var load_progress: ProgressBar = $LoadProgress
-@onready var grid_container: GridContainer = %GridContainer
+
 var v_scroll_bar : VScrollBar
 
 var active_download_window : Window
@@ -25,14 +25,12 @@ var cur_count = 0
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	visibility_changed.connect(self_visibility_changed)
-	
 # ew gross process function in an editor plugin
 func _process(delta: float) -> void:
 	if (not visible) or (not active): return
 	if v_scroll_bar == null: v_scroll_bar = scroll_container.get_v_scroll_bar()
 	else:
-		var current_y = v_scroll_bar.size.y + v_scroll_bar.value
-		var should_load_more = current_y > v_scroll_bar.max_value * 0.8
+		var should_load_more = v_scroll_bar.value > v_scroll_bar.max_value * 0.8
 		if should_load_more and not awaiting_response:
 			search_offset += 200
 			request_for_key_words(false)
@@ -45,8 +43,9 @@ func self_visibility_changed():
 		delete_all_items()
 
 func delete_all_items():
-	for c in grid_container.get_children():
-		grid_container.remove_child(c)
+	var grid: GridContainer = get_node("ScrollContainer/GridContainer")
+	for c in grid.get_children():
+		grid.remove_child(c)
 		c.queue_free()
 	if is_instance_valid(active_download_panel):
 		active_download_panel.queue_free()
@@ -55,13 +54,14 @@ func delete_all_items():
 func search_submitted(new_text: String) -> void:
 	request_for_key_words()
 func request_for_key_words(delete_before : bool = true):
+	get_node("%CenterContainer").hide()
 	load_progress.show()
 	load_progress.value = 0
 	if delete_before: delete_all_items()
 	var HTTP = HTTPRequest.new()
 	add_child(HTTP)
-	var query: String = %Search.text
-	var final_url = search_url.replace("{keywords}", query.uri_encode())
+	var keywords = get_node("%Search").text.replacen(" ", ",")
+	var final_url = search_url.replace("{keywords}", keywords)
 	if search_offset > 0:
 		final_url += "&offset=%s" % search_offset
 	# make initial request
@@ -72,9 +72,14 @@ func request_for_key_words(delete_before : bool = true):
 	remove_child(HTTP)
 	HTTP.queue_free()
 	awaiting_response = false
-	var parsed_data : Dictionary = return_parsed_json(utf8_body)
-	create_widgets_from(parsed_data.foundAssets)
-	load_progress.hide()
+	var parsed_data : Dictionary = return_parsed_xml(utf8_body)
+	if !parsed_data.is_empty():
+		create_widgets_from(parsed_data)
+		load_progress.hide()
+	else:
+		get_node("%CenterContainer").show()
+		get_node("%CenterContainer/NoResults").text = 'NO RESULTS FOR %s FOUND' % str(get_node("%Search").text).to_upper()
+		load_progress.hide()
 
 func create_widgets_from(parsed_data):
 	for acg_material in parsed_data:
@@ -82,14 +87,15 @@ func create_widgets_from(parsed_data):
 		if (str(acg_material).containsn("substance")):
 			push_warning("(ambientcg) possible substance painter file detected, ignoring.")
 			return
-		create_widget(acg_material.displayName, acg_material["previewImage"]["128-JPG-242424"], "https://ambientcg.com/view?id=%s" % acg_material.assetId)
+		create_widget(acg_material, parsed_data.get(acg_material), "https://ambientcg.com/view?id=%s" % acg_material)
 		est_count += 1
 
 
 func create_widget(widget_name, widget_icon_path, widget_page):
 	if not visible: return
 	var new_widget = ACG_MATERIAL_WIDGET.instantiate()
-	grid_container.columns = int((size.x - 40 + 8) / 200.0)
+	var grid_container : GridContainer = get_node("ScrollContainer/GridContainer")
+	grid_container.columns = int(size.x / 192.0)
 	var download = HTTPRequest.new()
 	add_child(download)
 	
@@ -133,6 +139,7 @@ func pop_up(widget_page, widget):
 		active_download_panel = active_download_window.get_node("DownloadWidget")
 		
 		active_download_panel.url = widget_page
+		active_download_panel.get_information()
 		active_download_panel.position = get_rect().size / 2 - Vector2(active_download_panel.size / 2)
 		active_download_panel.get_node("%Icon").texture = widget.get_node("%TextureIcon").texture
 		active_download_window.title = "Download " + widget.get_node("%Label").text
@@ -157,14 +164,7 @@ func return_parsed_xml(xml : PackedByteArray) -> Dictionary:
 					final_dict[str(attributes_dict.alt).replace("Asset: ", "")] = attributes_dict.src
 	return final_dict
 
-func return_parsed_json(json : PackedByteArray) -> Dictionary:
-	var json_string = json.get_string_from_utf8()
-	var parsed_json = JSON.new().parse_string(json_string)
-	if not parsed_json:
-		push_error("Failed to parse JSON: %s", parsed_json)
-		return {}
-	return parsed_json
-
 
 func _on_self_resized() -> void:
-	grid_container.columns = int((size.x - 40 + 8) / 200.0)
+	var grid_container : GridContainer = get_node("ScrollContainer/GridContainer")
+	grid_container.columns = int(size.x / 192.0)

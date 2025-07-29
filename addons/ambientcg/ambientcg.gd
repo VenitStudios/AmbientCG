@@ -11,8 +11,10 @@ func _enter_tree():
 		return
 	if not ProjectSettings.has_setting("ambientcg/download_path"):
 		ProjectSettings.set_setting("ambientcg/download_path", "res://AmbientCG/Downloads")
-	if not ProjectSettings.has_setting("ambientcg/make_materials_triplanar"):
-		ProjectSettings.set_setting("ambientcg/make_materials_triplanar", false)
+	if not ProjectSettings.has_setting("ambientcg/material_file_directory"):
+		ProjectSettings.set_setting("ambientcg/material_file_directory", "res://AmbientCG/Materials")
+	if not ProjectSettings.has_setting("ambientcg/environment_file_directory"):
+		ProjectSettings.set_setting("ambientcg/environment_file_directory", "res://AmbientCG/Environments")
 	editor_theme = EditorInterface.get_editor_theme()
 	ui_instance = UI.instantiate()
 	EditorInterface.get_editor_main_screen().add_child(ui_instance)
@@ -41,4 +43,4 @@ func _get_plugin_name():
 
 
 func _get_plugin_icon():
-	return EditorInterface.get_editor_theme().get_icon("Node", "EditorIcons")
+	return EditorInterface.get_editor_theme().get_icon("MaterialPreviewSphere", "EditorIcons")

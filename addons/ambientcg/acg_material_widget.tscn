@@ -1,8 +1,6 @@
-[gd_scene load_steps=8 format=3 uid="uid://bkjl27wc64e0v"]
+[gd_scene load_steps=7 format=3 uid="uid://bkjl27wc64e0v"]
 
 [ext_resource type="Script" uid="uid://dc6nvcqhqblh4" path="res://addons/ambientcg/TmakerBG.gd" id="1_kikqt"]
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_tg116"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q2tmk"]
 bg_color = Color(0.6, 0.6, 0.6, 0.392157)
@@ -22,11 +20,10 @@ border_color = Color(0.6, 0.6, 0.6, 0.392157)
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_f0yl3"]
 
 [node name="ACGWidget" type="Control"]
-custom_minimum_size = Vector2(192, 232)
+custom_minimum_size = Vector2(192, 224)
 layout_mode = 3
-anchor_right = 0.1
-anchor_bottom = 0.207
-offset_bottom = -7.56001
+anchor_right = 0.166667
+anchor_bottom = 0.345679
 metadata/_edit_use_anchors_ = true
 
 [node name="TMakerBG" type="ColorRect" parent="."]
@@ -37,7 +34,7 @@ anchor_bottom = 1.0
 offset_right = -0.00038147
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.195, 0.195, 0.195, 1.5)
+color = Color(0.188235, 0.188235, 0.188235, 1.5)
 script = ExtResource("1_kikqt")
 multiplier = 1.5
 metadata/_custom_type_script = "uid://dc6nvcqhqblh4"
@@ -56,34 +53,19 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
-texture = SubResource("CompressedTexture2D_tg116")
 expand_mode = 1
 stretch_mode = 6
 metadata/_edit_use_anchors_ = true
 
-[node name="Panel" type="Panel" parent="VBoxContainer"]
-custom_minimum_size = Vector2(0, 40)
-layout_mode = 2
-
-[node name="Label" type="Label" parent="VBoxContainer/Panel"]
+[node name="Label" type="Label" parent="VBoxContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 40)
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -96.0
-offset_top = -20.0
-offset_right = 96.0
-offset_bottom = 20.0
-grow_horizontal = 2
-grow_vertical = 2
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
 text = "MATERIAL"
 horizontal_alignment = 1
 vertical_alignment = 1
 text_overrun_behavior = 3
+metadata/_edit_use_anchors_ = true
 
 [node name="Button" type="Button" parent="."]
 unique_name_in_owner = true

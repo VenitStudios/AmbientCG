@@ -1,5 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://dfrcr8snmmxal"]
+[gd_scene load_steps=6 format=3 uid="uid://dfrcr8snmmxal"]
 
+[ext_resource type="Texture2D" uid="uid://be7bfntarygtk" path="res://icon.svg" id="1_k5w7h"]
 [ext_resource type="Script" uid="uid://dhs7ioi37elkg" path="res://addons/ambientcg/download_panel.gd" id="1_n6dyb"]
 [ext_resource type="Script" uid="uid://cn4gehailmkwg" path="res://addons/ambientcg/download_window.gd" id="1_yby7p"]
 [ext_resource type="Script" uid="uid://dc6nvcqhqblh4" path="res://addons/ambientcg/TmakerBG.gd" id="3_my73g"]
@@ -10,7 +11,7 @@ bg_color = Color(0.509804, 0.435294, 1, 1)
 [node name="DownloadWindow" type="Window"]
 title = "Test Window"
 initial_position = 4
-size = Vector2i(560, 280)
+size = Vector2i(840, 420)
 script = ExtResource("1_yby7p")
 
 [node name="DownloadWidget" type="Control" parent="."]
@@ -24,30 +25,27 @@ grow_vertical = 2
 script = ExtResource("1_n6dyb")
 metadata/_edit_use_anchors_ = true
 
-[node name="TMakerBG" type="ColorRect" parent="DownloadWidget"]
+[node name="ColorRect" type="ColorRect" parent="DownloadWidget"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = -0.000366211
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.195, 0.195, 0.195, 1.5)
-script = ExtResource("3_my73g")
-multiplier = 1.5
-metadata/_custom_type_script = "uid://dc6nvcqhqblh4"
+color = Color(0.141176, 0.141176, 0.141176, 1)
 
 [node name="Icon" type="TextureRect" parent="DownloadWidget"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(128, 128)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.1
-anchor_top = 0.257143
-anchor_right = 0.328571
-anchor_bottom = 0.714286
+anchor_left = 0.0428571
+anchor_top = 0.0333333
+anchor_right = 0.271429
+anchor_bottom = 0.490476
 grow_horizontal = 2
 grow_vertical = 2
+texture = ExtResource("1_k5w7h")
 expand_mode = 1
 stretch_mode = 5
 metadata/_edit_use_anchors_ = true
@@ -57,9 +55,9 @@ custom_minimum_size = Vector2(0, 32)
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.0428571
-anchor_top = 0.828571
-anchor_right = 0.385714
-anchor_bottom = 0.942857
+anchor_top = 0.871429
+anchor_right = 0.42381
+anchor_bottom = 0.947619
 text = "Cancel
 "
 metadata/_edit_use_anchors_ = true
@@ -68,78 +66,76 @@ metadata/_edit_use_anchors_ = true
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 0.828571
+anchor_left = 0.57619
+anchor_top = 0.871429
 anchor_right = 0.957143
-anchor_bottom = 0.942857
+anchor_bottom = 0.947619
 text = "Open Material on AmbientCG"
 metadata/_edit_use_anchors_ = true
 
-[node name="DownloadOptions" type="GridContainer" parent="DownloadWidget"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(136, 0)
+[node name="ScrollContainer" type="ScrollContainer" parent="DownloadWidget"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 0.285714
+anchor_left = 0.42381
+anchor_top = 0.185714
 anchor_right = 0.957143
-anchor_bottom = 0.714286
-theme_override_constants/h_separation = 32
-theme_override_constants/v_separation = 8
-columns = 2
+anchor_bottom = 0.795238
 metadata/_edit_use_anchors_ = true
 
-[node name="1K-JPG" type="Button" parent="DownloadWidget/DownloadOptions"]
-custom_minimum_size = Vector2(96, 32)
+[node name="DownloadOptions" type="GridContainer" parent="DownloadWidget/ScrollContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(136, 0)
 layout_mode = 2
-text = "1K-JPG"
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/h_separation = 2
+theme_override_constants/v_separation = 2
+columns = 4
+metadata/_edit_use_anchors_ = true
 
-[node name="1K-PNG" type="Button" parent="DownloadWidget/DownloadOptions"]
-custom_minimum_size = Vector2(96, 32)
+[node name="GettingDownloads" type="Label" parent="DownloadWidget/ScrollContainer/DownloadOptions"]
+unique_name_in_owner = true
 layout_mode = 2
-text = "1K-PNG"
-
-[node name="2K-JPG" type="Button" parent="DownloadWidget/DownloadOptions"]
-custom_minimum_size = Vector2(96, 32)
-layout_mode = 2
-text = "2K-JPG"
-
-[node name="2K-PNG" type="Button" parent="DownloadWidget/DownloadOptions"]
-custom_minimum_size = Vector2(96, 32)
-layout_mode = 2
-text = "2K-PNG"
-
-[node name="4K-JPG" type="Button" parent="DownloadWidget/DownloadOptions"]
-custom_minimum_size = Vector2(96, 32)
-layout_mode = 2
-text = "4K-JPG"
-
-[node name="4K-PNG" type="Button" parent="DownloadWidget/DownloadOptions"]
-custom_minimum_size = Vector2(96, 32)
-layout_mode = 2
-text = "4K-PNG"
+size_flags_horizontal = 6
+text = "Fetching Downloads...
+This May Take a Moment"
+vertical_alignment = 1
 
 [node name="Label" type="Label" parent="DownloadWidget"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 0.171429
+anchor_left = 0.42381
+anchor_top = 0.0333333
 anchor_right = 0.957143
-anchor_bottom = 0.257143
-text = "Downloads"
+anchor_bottom = 0.185714
+theme_override_font_sizes/font_size = 32
+text = "Download Options"
 vertical_alignment = 1
 metadata/_edit_use_anchors_ = true
 
-[node name="MakeMaterialCheck" type="CheckBox" parent="DownloadWidget"]
-unique_name_in_owner = true
+[node name="HBoxContainer" type="HBoxContainer" parent="DownloadWidget"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 0.714286
+anchor_left = 0.0428571
+anchor_top = 0.795238
 anchor_right = 0.957143
-anchor_bottom = 0.828571
+anchor_bottom = 0.871429
+alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="MakeMaterialCheck" type="CheckBox" parent="DownloadWidget/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
 button_pressed = true
 text = "Make Material"
+alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="TriplanarCheck" type="CheckBox" parent="DownloadWidget/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "Triplanar UV"
 alignment = 1
 metadata/_edit_use_anchors_ = true
 
@@ -155,7 +151,7 @@ offset_right = -0.000366211
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.195, 0.195, 0.195, 1.5)
+color = Color(0.188235, 0.188235, 0.188235, 1.5)
 script = ExtResource("3_my73g")
 multiplier = 1.5
 metadata/_custom_type_script = "uid://dc6nvcqhqblh4"
