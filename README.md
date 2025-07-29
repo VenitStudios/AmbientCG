@@ -1,14 +1,14 @@
 # AmbientCG Material Download Plugin
 
   AmbientCG Downloader Editor Plugin For Godot 4.x
-  Downloads Files from AmbientCG.com and automatically populates StandardMaterial3D*
+  Downloads Files from AmbientCG.com and automatically populates StandardMaterial3D and Environment Nodes
   
   https://godotengine.org/asset-library/asset/3657
 
 # Developer Notes
 
-  - Substance Materials **DO NOT** download properly, they are ignored by the material browser. This may change later on.
-  - You can Change the Download Path in Project Settings under "ambientcg/download_path"
+  - Substance Painter Materials are ignored by the material browser. This may change later on, godot can't use them!
+  - Several Paths can be changed in Project Settings under "ambientcg/"
 
 # Easy to Search and Download PBR Surfaces
 
