@@ -54,7 +54,13 @@ func delete_all_items():
 		active_download_panel = null
 
 func search_submitted(new_text: String) -> void:
+	## reset former counters for fresh search results
+	search_offset = 0
+	est_count = 0
+	cur_count = 0
+
 	request_for_key_words()
+
 func request_for_key_words(delete_before : bool = true):
 	get_node("%CenterContainer").hide()
 	load_progress.show()
