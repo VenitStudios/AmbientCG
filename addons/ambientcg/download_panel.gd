@@ -271,6 +271,116 @@ func await_for_reimport():
 		print("Waiting for initial file import progress: ", progress)
 		await get_tree().create_timer(1.0).timeout
 
+func create_orm_texture(directory: String, file_name: String, valid_files: Array[String]) -> String:
+	print("Creating ORM texture")
+	
+	var ao_file = ""
+	var roughness_file = ""
+	var metallic_file = ""
+	
+	# Find the component textures
+	for file in valid_files:
+		if file.containsn("AmbientOcclusion"):
+			ao_file = file
+		elif file.containsn("Roughness"):
+			roughness_file = file
+		elif file.containsn("Metallic") or file.containsn("Metalness"):
+			metallic_file = file
+	
+	# If we don't have at least one of the required textures, skip ORM creation
+	if ao_file.is_empty() and roughness_file.is_empty() and metallic_file.is_empty():
+		print("No ORM component textures found, skipping ORM creation")
+		return ""
+	
+	# Load the first available texture to get dimensions
+	var reference_texture: Texture2D = null
+	var texture_size: Vector2i
+	
+	if not ao_file.is_empty():
+		reference_texture = load(ao_file)
+	elif not roughness_file.is_empty():
+		reference_texture = load(roughness_file)
+	elif not metallic_file.is_empty():
+		reference_texture = load(metallic_file)
+	
+	if reference_texture == null:
+		print("Failed to load reference texture for ORM creation")
+		return ""
+	
+	texture_size = Vector2i(reference_texture.get_width(), reference_texture.get_height())
+	print("Creating ORM texture at resolution: ", texture_size)
+	
+	# Load component textures and get their image data
+	var ao_image: Image = null
+	var roughness_image: Image = null
+	var metallic_image: Image = null
+	
+	if not ao_file.is_empty():
+		var ao_texture = load(ao_file) as Texture2D
+		ao_image = ao_texture.get_image()
+	
+	if not roughness_file.is_empty():
+		var roughness_texture = load(roughness_file) as Texture2D
+		roughness_image = roughness_texture.get_image()
+	
+	if not metallic_file.is_empty():
+		var metallic_texture = load(metallic_file) as Texture2D
+		metallic_image = metallic_texture.get_image()
+	
+	# Create the ORM image
+	var orm_image = Image.create(texture_size.x, texture_size.y, false, Image.FORMAT_RGB8)
+	
+	# Pack the channels: R=AO, G=Roughness, B=Metallic
+	for x in range(texture_size.x):
+		for y in range(texture_size.y):
+			var r_value = 255  # Default white for AO if not present
+			var g_value = 128  # Default middle gray for roughness if not present
+			var b_value = 0    # Default black for metallic if not present
+			
+			# Extract red channel from AO (assuming grayscale)
+			if ao_image != null:
+				var ao_color = ao_image.get_pixel(x, y)
+				r_value = int(ao_color.r * 255)
+			
+			# Extract red channel from Roughness (assuming grayscale)
+			if roughness_image != null:
+				var roughness_color = roughness_image.get_pixel(x, y)
+				g_value = int(roughness_color.r * 255)
+			
+			# Extract red channel from Metallic (assuming grayscale)
+			if metallic_image != null:
+				var metallic_color = metallic_image.get_pixel(x, y)
+				b_value = int(metallic_color.r * 255)
+			
+			var final_color = Color(r_value / 255.0, g_value / 255.0, b_value / 255.0)
+			orm_image.set_pixel(x, y, final_color)
+	
+	# Save the ORM texture
+	var orm_path = directory.path_join(file_name + "_ORM.png")
+	orm_image.save_png(orm_path)
+	
+	# Update the editor file system to recognize the new file
+	var editor_fs: EditorFileSystem = EditorInterface.get_resource_filesystem()
+	editor_fs.update_file(orm_path)
+	
+	# Force a more thorough reimport
+	editor_fs.scan_sources()
+	await await_for_reimport()
+	
+	# Additional wait to ensure import is complete
+	await get_tree().create_timer(0.5).timeout
+	
+	print("Created ORM texture: ", orm_path)
+	
+	# Clean up original component files now that ORM is created
+	var files_to_delete = [ao_file, roughness_file, metallic_file]
+	for file_path in files_to_delete:
+		if not file_path.is_empty() and FileAccess.file_exists(file_path):
+			DirAccess.remove_absolute(file_path)
+			print("Deleted original component file: ", file_path)
+	
+	return orm_path
+
 func create_material(directory, file_name: String):
 	print("Creating Material")
 	
@@ -302,9 +412,23 @@ func create_material(directory, file_name: String):
 	await get_tree().process_frame
 	await await_for_reimport()
 
+	# Create ORM texture first (only if checkbox is checked)
+	var orm_path = ""
+	if %ORMCheck.button_pressed:
+		%DownloadLabel.text = "Creating ORM Texture"
+		orm_path = await create_orm_texture(directory, file_name, valid_files)
+		if not orm_path.is_empty():
+			valid_files.append(orm_path)
+			# Ensure ORM texture is fully imported before proceeding
+			editor_fs.update_file(orm_path)
+			await await_for_reimport()
+			await get_tree().create_timer(1.0).timeout  # Extra wait for import completion
+
 	new_material.uv1_triplanar = %TriplanarCheck.button_pressed
 
 	var albedo_filename = ""
+	var has_orm = not orm_path.is_empty()
+	
 	for file in valid_files:
 		if file.containsn("Color"):
 			new_material.albedo_texture = load(file)
@@ -314,6 +438,7 @@ func create_material(directory, file_name: String):
 				editor_fs.update_file(new_path)
 				await await_for_reimport()
 			albedo_filename = file.get_basename()
+			
 		if file.containsn("Displacement"):
 			# disable heightmap with triplanar texture to avoid godot warning
 			new_material.heightmap_enabled = not new_material.uv1_triplanar
@@ -326,12 +451,46 @@ func create_material(directory, file_name: String):
 			new_material.normal_enabled = true
 			new_material.normal_texture = load(file)
 
-		if file.containsn("Roughness"):
-			new_material.roughness_texture = load(file)
-		if file.containsn("AmbientOcclusion"):
-			new_material.ao_texture = load(file)
-	
-	
+		if file.containsn("_ORM"):
+			# Use the ORM texture we created
+			has_orm = true
+			print("Loading ORM texture: ", file)
+			
+			# Force reimport the ORM file one more time to be sure
+			editor_fs.reimport_files([file])
+			await await_for_reimport()
+			
+			var orm_texture = load(file)
+			if orm_texture == null:
+				print("Failed to load ORM texture, retrying...")
+				await get_tree().create_timer(0.5).timeout
+				orm_texture = load(file)
+			
+			if orm_texture != null:
+				new_material.ao_enabled = true
+				new_material.ao_texture = orm_texture
+				new_material.ao_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_RED
+				
+				new_material.roughness_texture = orm_texture
+				new_material.roughness_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_GREEN
+				
+				new_material.metallic_texture = orm_texture
+				new_material.metallic_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_BLUE
+				print("Successfully applied ORM texture to material")
+			else:
+				print("Failed to load ORM texture after retries")
+			
+		# Only use individual textures if we don't have ORM
+		elif not has_orm:
+			if file.containsn("Roughness"):
+				new_material.roughness_texture = load(file)
+			if file.containsn("AmbientOcclusion"):
+				new_material.ao_texture = load(file)
+			if file.containsn("Metallic") or file.containsn("Metalness"):
+				new_material.metallic_texture = load(file)
+	if new_material.metallic_texture:
+		new_material.metallic = 1.0
+		
 	if new_material.albedo_texture:
 		var save_path = ""
 		if albedo_filename.is_empty():
