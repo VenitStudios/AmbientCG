@@ -264,43 +264,6 @@ func extract(zip_file: String, file_name: String):
 	_on_cancel_pressed()
 	DirAccess.remove_absolute(zip_file)
 
-func configure_orm_import_settings(orm_path: String):
-	# Configure import settings for ORM texture
-	var import_path = orm_path + ".import"
-	
-	# Create proper import configuration for ORM texture
-	var config = ConfigFile.new()
-	config.set_value("remap", "importer", "texture")
-	config.set_value("remap", "type", "CompressedTexture2D")
-	
-	# Important: Disable sRGB for ORM textures since they contain data, not color
-	config.set_value("params", "compress/mode", 0)  # Lossless compression
-	config.set_value("params", "compress/high_quality", true)
-	config.set_value("params", "compress/lossy_quality", 0.7)
-	config.set_value("params", "compress/hdr_compression", 1)
-	config.set_value("params", "compress/normal_map", 0)
-	config.set_value("params", "compress/channel_pack", 0)
-	config.set_value("params", "mipmaps/generate", true)
-	config.set_value("params", "roughness/mode", 0)
-	config.set_value("params", "roughness/src_normal", "")
-	config.set_value("params", "process/fix_alpha_border", true)
-	config.set_value("params", "process/premult_alpha", false)
-	config.set_value("params", "process/normal_map_invert_y", false)
-	config.set_value("params", "process/hdr_as_srgb", false)
-	config.set_value("params", "process/hdr_clamp_exposure", false)
-	config.set_value("params", "process/size_limit", 0)
-	config.set_value("params", "detect_3d/compress_to", 0)  # Don't auto-detect as 3D
-	config.set_value("params", "svg/scale", 1.0)
-	
-	# Most importantly - disable sRGB conversion for data textures
-	config.set_value("params", "process/HDR_as_sRGB", false)
-	
-	var error = config.save(import_path)
-	if error != OK:
-		print("Failed to save import config for ORM texture: ", error)
-	else:
-		print("Configured import settings for ORM texture")
-
 func await_for_reimport():
 	var editor_fs: EditorFileSystem = EditorInterface.get_resource_filesystem()
 	while not is_equal_approx(1.0, editor_fs.get_scanning_progress()) and editor_fs.is_scanning():
@@ -406,9 +369,6 @@ func create_orm_texture(directory: String, file_name: String, valid_files: Array
 	
 	# Additional wait to ensure import is complete
 	await get_tree().create_timer(0.5).timeout
-	
-	# Try to configure the import settings for the ORM texture
-	#configure_orm_import_settings(orm_path)
 	
 	print("Created ORM texture: ", orm_path)
 	
