@@ -1,6 +1,5 @@
-[gd_scene load_steps=6 format=3 uid="uid://dfrcr8snmmxal"]
+[gd_scene load_steps=5 format=3 uid="uid://dfrcr8snmmxal"]
 
-[ext_resource type="Texture2D" uid="uid://be7bfntarygtk" path="res://icon.svg" id="1_k5w7h"]
 [ext_resource type="Script" uid="uid://dhs7ioi37elkg" path="res://addons/ambientcg/download_panel.gd" id="1_n6dyb"]
 [ext_resource type="Script" uid="uid://cn4gehailmkwg" path="res://addons/ambientcg/download_window.gd" id="1_yby7p"]
 [ext_resource type="Script" uid="uid://dc6nvcqhqblh4" path="res://addons/ambientcg/TmakerBG.gd" id="3_my73g"]
@@ -9,6 +8,7 @@
 bg_color = Color(0.509804, 0.435294, 1, 1)
 
 [node name="DownloadWindow" type="Window"]
+oversampling_override = 1.0
 title = "Test Window"
 initial_position = 4
 size = Vector2i(840, 420)
@@ -45,7 +45,6 @@ anchor_right = 0.271429
 anchor_bottom = 0.490476
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("1_k5w7h")
 expand_mode = 1
 stretch_mode = 5
 metadata/_edit_use_anchors_ = true
@@ -139,19 +138,27 @@ text = "Triplanar UV"
 alignment = 1
 metadata/_edit_use_anchors_ = true
 
+[node name="ORMCheck" type="CheckBox" parent="DownloadWidget/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "Create ORM"
+alignment = 1
+metadata/_edit_use_anchors_ = true
+
 [node name="DownloadVisualizer" type="ColorRect" parent="DownloadWidget"]
 unique_name_in_owner = true
 visible = false
 self_modulate = Color(1, 1, 1, 0.588235)
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_right = -0.000366211
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.188235, 0.188235, 0.188235, 1.5)
+color = Color(0.315, 0.35999998, 0.435, 1.5)
 script = ExtResource("3_my73g")
 multiplier = 1.5
 metadata/_custom_type_script = "uid://dc6nvcqhqblh4"
