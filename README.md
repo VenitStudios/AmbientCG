@@ -6,7 +6,7 @@
   https://godotengine.org/asset-library/asset/3657
 
 # Developer Notes
-  - A *major* refactor is in the works. any code contributions may be merged in, but will end up in the "legacy" branch
+  - A *major* refactor is in the works (no ETA). any code contributions may be merged in, but will eventually end up in the "legacy" branch
   - Substance Painter Materials are ignored by the material browser. This may change later on, godot can't use them right now!
   - Several Paths can be changed in Project Settings under "ambientcg/"
 
