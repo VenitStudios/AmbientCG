@@ -171,4 +171,10 @@ custom_minimum_size = Vector2(128, 32)
 layout_mode = 2
 text = "Resize"
 
+[node name="enable_packing" type="CheckButton" parent="ExtractPanel/PopulationOptionsContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(128, 32)
+layout_mode = 2
+text = "Pack ORM"
+
 [connection signal="close_requested" from="." to="." method="_on_close_requested"]

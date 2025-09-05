@@ -15,7 +15,7 @@ func download_file_from_data(file_information : Dictionary, source_window : Wind
 	file_downloaded.emit(path)
 
 
-func extract_and_save(window : Window, source_file : String, file_options : Dictionary[String, CheckBox], options : Dictionary = {}) -> void:
+func extract_and_save(window : Window, source_file : String, files_selected : Dictionary[String, CheckBox], options : Dictionary = {}) -> void:
 	var file_sys := EditorInterface.get_resource_filesystem()
 	var reader := ZIPReader.new()
 	reader.open(source_file)
@@ -23,8 +23,10 @@ func extract_and_save(window : Window, source_file : String, file_options : Dict
 	
 	var extraction_path : String = await open_directory_dialog_for_path("Select path to Extract to")
 	
+	var saved_files : PackedStringArray
+	
 	for file in files:
-		if file_options.has(file) and (file_options.get(file, CheckBox.new()) as CheckBox).button_pressed:
+		if files_selected.has(file) and (files_selected.get(file, CheckBox.new()) as CheckBox).button_pressed:
 			var file_data : PackedByteArray = reader.read_file(file)
 			
 			var new_file_path = extraction_path.trim_suffix("/") + "/%s" % file.get_file()
@@ -34,7 +36,7 @@ func extract_and_save(window : Window, source_file : String, file_options : Dict
 				fs.store_buffer(file_data)
 				fs.close()
 				file_sys.update_file(new_file_path)
-				
+				saved_files.append(new_file_path)
 				if ["jpg", "jpeg", "png"].has(new_file_path.get_extension()):
 					if options.get("use_custom_size", false):
 						var scaled_image = Image.load_from_file(new_file_path)
@@ -42,7 +44,9 @@ func extract_and_save(window : Window, source_file : String, file_options : Dict
 						if scaled_image and not scaled_image.is_empty():
 							var new_size = options.get("img_size", scaled_image.get_size())
 							if not new_size == scaled_image.get_size():
+								
 								scaled_image.resize(new_size.x, new_size.y,Image.INTERPOLATE_BILINEAR)
+								
 								match new_file_path.get_extension():
 									"jpg", "jpeg":
 										scaled_image.save_jpg(new_file_path)
@@ -52,11 +56,21 @@ func extract_and_save(window : Window, source_file : String, file_options : Dict
 					file_sys.update_file(new_file_path)
 	
 	file_sys.scan()
+	file_sys.scan_sources()
 	reader.close()
 	window.queue_free()
 	
+	await file_sys.resources_reimported
+	
 	# delete file after use to avoid clutter
 	DirAccess.remove_absolute(source_file)
+	
+	if options.get("enable_packing", false):
+		var mat = AmbientMaterialMaker.make_orm_material(saved_files, options)
+		ResourceSaver.save(mat, extraction_path.trim_suffix("/") + "/%s_orm.material" % source_file.get_file().get_basename() )
+	else:
+		var mat = AmbientMaterialMaker.make_standard_material(saved_files, options)
+		ResourceSaver.save(mat, extraction_path.trim_suffix("/") + "/%s_standard.material" % source_file.get_file().get_basename() )
 
 func confirm_file_path(path : String, dialog_text : String) -> void:
 	var confirmation_dialog = ConfirmationDialog.new()

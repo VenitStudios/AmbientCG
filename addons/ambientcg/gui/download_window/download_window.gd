@@ -13,6 +13,7 @@
 @onready var img_size_height: SpinBox = %img_size_height
 @onready var enable_triplanar: CheckButton = %enable_triplanar
 @onready var enable_resize: CheckButton = %enable_resize
+@onready var enable_packing: CheckButton = %enable_packing
 
 var material_json : Dictionary
 var implementations : Dictionary
@@ -37,7 +38,6 @@ func pop_up(_material_json : Dictionary, icon : Texture2D = null) -> void:
 	download_panel.show()
 	extract_panel.hide()
 	
-	print(material_json)
 
 func connect_signals() -> void:
 	AmbientFileHander.file_downloaded.connect(check_downloaded_extension)
@@ -145,7 +145,8 @@ func extract_button_pressed() -> void:
 	var options_dict = {
 	"img_size": Vector2(img_size_width.value, img_size_height.value), 
 	"use_triplanar_uv": enable_triplanar.button_pressed,
-	"use_custom_size": enable_resize.button_pressed
+	"use_custom_size": enable_resize.button_pressed,
+	"enable_packing": enable_packing.button_pressed,
 	}
 	AmbientFileHander.extract_and_save(self, extraction_source_file, extraction_file_links, options_dict)
 
