@@ -1,0 +1,121 @@
+[gd_scene load_steps=3 format=3 uid="uid://s0qvbretbfj4"]
+
+[ext_resource type="Script" uid="uid://qty5c6pwmgy6" path="res://addons/ambientcg/gui/ambient_ui/ambient_ui.gd" id="1_tpory"]
+[ext_resource type="Texture2D" uid="uid://bh5suxm427fn0" path="res://addons/ambientcg/plugin_assets/icon/Search.svg" id="2_1lun0"]
+
+[node name="AmbientUI" type="Control"]
+clip_children = 1
+clip_contents = true
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_tpory")
+
+[node name="SearchResultCount" type="Label" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.861111
+anchor_top = 0.950617
+anchor_right = 1.0
+anchor_bottom = 0.987654
+grow_horizontal = 0
+grow_vertical = 0
+metadata/_edit_use_anchors_ = true
+
+[node name="SearchingIndicator" type="Label" parent="."]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.722222
+anchor_top = 0.950617
+anchor_right = 0.833333
+anchor_bottom = 0.987654
+grow_horizontal = 0
+grow_vertical = 0
+text = "Searching..."
+metadata/_edit_use_anchors_ = true
+
+[node name="APIVersionInfo" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.938272
+anchor_right = 0.194444
+anchor_bottom = 0.981481
+theme_override_font_sizes/font_size = 12
+text = "Fetching API Information"
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.00347222
+anchor_right = 0.996528
+anchor_bottom = 0.104938
+offset_bottom = -4.0
+grow_horizontal = 2
+theme_override_constants/separation = 4
+metadata/_edit_use_anchors_ = true
+
+[node name="SearchBar" type="LineEdit" parent="VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Search"
+right_icon = ExtResource("2_1lun0")
+metadata/_edit_use_anchors_ = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(98, 32)
+layout_mode = 2
+text = "Sort By Type"
+vertical_alignment = 1
+
+[node name="TypeOptions" type="OptionButton" parent="VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 32)
+layout_mode = 2
+tooltip_text = "Resource Type"
+
+[node name="MaterialBrowser" type="Panel" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_left = 0.00347222
+anchor_top = 0.104938
+anchor_right = 0.996528
+anchor_bottom = 0.938272
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="SearchScroll" type="ScrollContainer" parent="MaterialBrowser"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 0
+
+[node name="SearchGrid" type="GridContainer" parent="MaterialBrowser/SearchScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3

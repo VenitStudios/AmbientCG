@@ -1,0 +1,174 @@
+[gd_scene load_steps=3 format=3 uid="uid://bxxcwt6y0ixyg"]
+
+[ext_resource type="Script" uid="uid://ew5aw7503d0c" path="res://addons/ambientcg/gui/download_window/download_window.gd" id="1_p7iqu"]
+[ext_resource type="Script" uid="uid://dns7le84qmy3s" path="res://addons/ambientcg/gui/TMakerBG.gd" id="2_8pnig"]
+
+[node name="DownloadWindow" type="Window"]
+initial_position = 2
+size = Vector2i(720, 480)
+exclusive = true
+script = ExtResource("1_p7iqu")
+
+[node name="TMakerBG" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.12549, 0.12549, 0.12549, 1)
+script = ExtResource("2_8pnig")
+metadata/_custom_type_script = "uid://dns7le84qmy3s"
+
+[node name="MaterialIcon" type="TextureRect" parent="."]
+unique_name_in_owner = true
+anchors_preset = -1
+anchor_left = 0.0111111
+anchor_top = 0.025
+anchor_right = 0.188889
+anchor_bottom = 0.291667
+offset_right = 1.52588e-05
+metadata/_edit_use_anchors_ = true
+
+[node name="DownloadPanel" type="Panel" parent="."]
+unique_name_in_owner = true
+visible = false
+anchors_preset = -1
+anchor_left = 0.0111111
+anchor_top = 0.558333
+anchor_right = 0.988889
+anchor_bottom = 0.958333
+metadata/_edit_use_anchors_ = true
+
+[node name="Title" type="Label" parent="DownloadPanel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = -0.208332
+anchor_right = 1.0
+anchor_bottom = -0.0833324
+text = "Download"
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="DownloadContainer" type="HBoxContainer" parent="DownloadPanel"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="DownloadProgress" type="ProgressBar" parent="DownloadPanel"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_top = -0.0625
+anchor_right = 1.0
+anchor_bottom = -0.0208333
+show_percentage = false
+metadata/_edit_use_anchors_ = true
+
+[node name="ExtractPanel" type="Panel" parent="."]
+unique_name_in_owner = true
+anchors_preset = -1
+anchor_left = 0.0111111
+anchor_top = 0.558333
+anchor_right = 0.988889
+anchor_bottom = 0.958333
+metadata/_edit_use_anchors_ = true
+
+[node name="Title" type="Label" parent="ExtractPanel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = -0.208332
+anchor_right = 1.0
+anchor_bottom = -0.0833324
+text = "Select & Extract Files"
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="Title2" type="Label" parent="ExtractPanel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.636364
+anchor_top = -0.208333
+anchor_right = 1.0
+anchor_bottom = -0.0833333
+text = "Advanced Import Settings"
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="ExtractScroll" type="ScrollContainer" parent="ExtractPanel"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 0
+metadata/_edit_use_anchors_ = true
+
+[node name="ExtractFileOptions" type="VBoxContainer" parent="ExtractPanel/ExtractScroll"]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="extract_button" type="Button" parent="ExtractPanel"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.636364
+anchor_top = 0.833333
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "EXTRACT AND SAVE"
+metadata/_edit_use_anchors_ = true
+
+[node name="PopulationOptionsContainer" type="GridContainer" parent="ExtractPanel"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.636364
+anchor_right = 1.0
+anchor_bottom = 0.833333
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 0
+columns = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="img_size_width" type="SpinBox" parent="ExtractPanel/PopulationOptionsContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 8192.0
+value = 1024.0
+update_on_text_changed = true
+prefix = "Width"
+
+[node name="img_size_height" type="SpinBox" parent="ExtractPanel/PopulationOptionsContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 8192.0
+value = 1024.0
+prefix = "Height"
+
+[node name="enable_triplanar" type="CheckButton" parent="ExtractPanel/PopulationOptionsContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(128, 32)
+layout_mode = 2
+text = "Triplanar"
+
+[node name="enable_resize" type="CheckButton" parent="ExtractPanel/PopulationOptionsContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(128, 32)
+layout_mode = 2
+text = "Resize"
+
+[connection signal="close_requested" from="." to="." method="_on_close_requested"]

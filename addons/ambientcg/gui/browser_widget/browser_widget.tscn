@@ -1,0 +1,41 @@
+[gd_scene load_steps=3 format=3 uid="uid://bt7rsw41br6bk"]
+
+[ext_resource type="Script" uid="uid://cgrb48l2rdwf6" path="res://addons/ambientcg/gui/browser_widget/browser_widget.gd" id="1_4udw0"]
+[ext_resource type="Texture2D" uid="uid://7racfffmymlm" path="res://addons/ambientcg/plugin_assets/icon/missing_resource.svg" id="2_d3rcr"]
+
+[node name="BrowserWidget" type="Button"]
+custom_minimum_size = Vector2(128, 128)
+anchors_preset = -1
+anchor_right = 0.111111
+anchor_bottom = 0.197531
+grow_horizontal = 2
+grow_vertical = 2
+flat = true
+script = ExtResource("1_4udw0")
+metadata/_edit_use_anchors_ = true
+
+[node name="Thumbnail" type="TextureRect" parent="."]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="MissingRes" type="TextureRect" parent="Thumbnail"]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.40625
+anchor_top = 0.40625
+anchor_right = 0.59375
+anchor_bottom = 0.59375
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_d3rcr")
+expand_mode = 1
+metadata/_edit_use_anchors_ = true
