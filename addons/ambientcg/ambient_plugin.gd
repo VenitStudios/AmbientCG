@@ -18,7 +18,7 @@ func _enter_tree():
 	
 	add_autoload_singleton("AmbientAPI", "res://addons/ambientcg/global/ambient_api.gd")
 	add_autoload_singleton("AmbientParser", "res://addons/ambientcg/global/ambient_parser.gd")
-	add_autoload_singleton("AmbientFileHander", "res://addons/ambientcg/global/ambient_file_handler.gd")
+	add_autoload_singleton("AmbientFileHandler", "res://addons/ambientcg/global/ambient_file_handler.gd")
 	add_autoload_singleton("AmbientMaterialMaker", "res://addons/ambientcg/global/ambient_material_maker.gd")
 
 
@@ -29,7 +29,7 @@ func _exit_tree():
 	
 	remove_autoload_singleton("AmbientAPI")
 	remove_autoload_singleton("AmbientParser")
-	remove_autoload_singleton("AmbientFileHander")
+	remove_autoload_singleton("AmbientFileHandler")
 	remove_autoload_singleton("AmbientMaterialMaker")
 
 func _has_main_screen():

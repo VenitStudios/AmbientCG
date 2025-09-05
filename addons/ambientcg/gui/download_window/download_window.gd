@@ -40,7 +40,7 @@ func pop_up(_material_json : Dictionary, icon : Texture2D = null) -> void:
 	
 
 func connect_signals() -> void:
-	AmbientFileHander.file_downloaded.connect(check_downloaded_extension)
+	AmbientFileHandler.file_downloaded.connect(check_downloaded_extension)
 	
 	extract_button.pressed.connect(extract_button_pressed)
 	
@@ -148,11 +148,11 @@ func extract_button_pressed() -> void:
 	"use_custom_size": enable_resize.button_pressed,
 	"enable_packing": enable_packing.button_pressed,
 	}
-	AmbientFileHander.extract_and_save(self, extraction_source_file, extraction_file_links, options_dict)
+	AmbientFileHandler.extract_and_save(self, extraction_source_file, extraction_file_links, options_dict)
 
 
 func download_button_pressed(data : Dictionary) -> void:
-	AmbientFileHander.download_file_from_data(data, self)
+	AmbientFileHandler.download_file_from_data(data, self)
 	last_used_file = data.get("uri", "")
 	last_used_file_info = data
 
