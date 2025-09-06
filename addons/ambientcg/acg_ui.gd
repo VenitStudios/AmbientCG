@@ -1,7 +1,8 @@
 @tool
 extends Control
 
-const search_url = "https://ambientcg.com/hx/asset-list?q={keywords}&colorMode=&thumbnails=200&sort=popular"
+const search_url = "https://ambientcg.com/hx/asset-list?q={keywords}&colorMode=&thumbnails=200&sort={sort_by}"
+const sort_options = ["popular", "latest", "alphabet", "downloads"]
 const ACG_MATERIAL_WIDGET = preload("res://addons/ambientcg/acg_material_widget.tscn")
 const DOWNLOAD_WINDOW = preload("res://addons/ambientcg/download_panel.tscn")
 
@@ -58,7 +59,7 @@ func search_submitted(new_text: String) -> void:
 	search_offset = 0
 	est_count = 0
 	cur_count = 0
-
+	
 	request_for_key_words()
 
 func request_for_key_words(delete_before : bool = true):
@@ -69,7 +70,8 @@ func request_for_key_words(delete_before : bool = true):
 	var HTTP = HTTPRequest.new()
 	add_child(HTTP)
 	var keywords = get_node("%Search").text.replacen(" ", ",")
-	var final_url = search_url.replace("{keywords}", keywords)
+	var sort_by = sort_options[$Sort.selected]
+	var final_url = search_url.replace("{keywords}", keywords).replace("{sort_by}", sort_by)
 	if search_offset > 0:
 		final_url += "&offset=%s" % search_offset
 	# make initial request
@@ -176,3 +178,7 @@ func return_parsed_xml(xml : PackedByteArray) -> Dictionary:
 func _on_self_resized() -> void:
 	var grid_container : GridContainer = get_node("ScrollContainer/GridContainer")
 	grid_container.columns = int((size.x - 40 + 8) / 200.0)
+
+
+func _on_sort_item_selected(index: int) -> void:
+	search_submitted("")

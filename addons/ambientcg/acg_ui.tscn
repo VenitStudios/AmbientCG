@@ -39,7 +39,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.12549, 0.12549, 0.12549, 1)
+color = Color(0.21, 0.24, 0.29, 1)
 script = ExtResource("2_24p0g")
 metadata/_custom_type_script = "uid://dc6nvcqhqblh4"
 
@@ -47,15 +47,42 @@ metadata/_custom_type_script = "uid://dc6nvcqhqblh4"
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.0555556
+anchor_left = 0.0546875
 anchor_top = 0.0493827
-anchor_right = 0.388889
+anchor_right = 0.388021
 anchor_bottom = 0.0987654
+offset_left = 1.0
+offset_right = 0.999817
+offset_bottom = 3.43323e-05
 grow_horizontal = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_24p0g")
 placeholder_text = "SEARCH KEYWORDS ON AMBIENTCG"
 alignment = 1
 metadata/_edit_use_anchors_ = true
+
+[node name="Sort" type="OptionButton" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0546875
+anchor_top = 0.049
+anchor_right = 0.388
+anchor_bottom = 0.099
+offset_left = 477.0
+offset_top = 0.248001
+offset_right = 477.024
+offset_bottom = -0.152
+theme_override_styles/normal = SubResource("StyleBoxFlat_24p0g")
+alignment = 1
+selected = 0
+item_count = 4
+popup/item_0/text = "SORT BY POPULAR"
+popup/item_0/id = 0
+popup/item_1/text = "SORT BY LATEST"
+popup/item_1/id = 1
+popup/item_2/text = "SORT BY ALPHABET"
+popup/item_2/id = 2
+popup/item_3/text = "SORT BY DOWNLOADS"
+popup/item_3/id = 3
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
 layout_mode = 1
@@ -74,7 +101,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/h_separation = 8
 theme_override_constants/v_separation = 8
-columns = 6
+columns = 5
 
 [node name="LoadProgress" type="ProgressBar" parent="."]
 layout_mode = 1
@@ -118,3 +145,4 @@ metadata/_edit_use_anchors_ = true
 
 [connection signal="resized" from="." to="." method="_on_self_resized"]
 [connection signal="text_submitted" from="Search" to="." method="search_submitted"]
+[connection signal="item_selected" from="Sort" to="." method="_on_sort_item_selected"]
