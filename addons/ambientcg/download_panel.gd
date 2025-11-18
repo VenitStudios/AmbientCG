@@ -271,6 +271,26 @@ func await_for_reimport():
 		print("Waiting for initial file import progress: ", progress)
 		await get_tree().create_timer(1.0).timeout
 
+func create_albedo_with_alpha(color_file,opacity_file):
+		%DownloadLabel.text = "Creating ORM Texture"
+		var color_img := Image.load_from_file(color_file)
+		var opacity_img := Image.load_from_file(opacity_file)
+		
+		if color_img.get_format() != Image.FORMAT_RGBA8:
+			color_img.convert(Image.FORMAT_RGBA8)
+		
+		for y in range(color_img.get_height()):
+			for x in range(color_img.get_width()):
+				var color_pixel := color_img.get_pixel(x, y)
+				var opacity_pixel := opacity_img.get_pixel(x, y)
+				color_pixel.a = opacity_pixel.r
+				color_img.set_pixel(x, y, color_pixel)
+		color_img.save_png(color_file)
+		if FileAccess.file_exists(opacity_file):
+			DirAccess.remove_absolute(opacity_file)
+			print("Deleted original component file: ", opacity_file)
+		
+
 func create_orm_texture(directory: String, file_name: String, valid_files: Array[String]) -> String:
 	print("Creating ORM texture")
 	
@@ -430,7 +450,14 @@ func create_material(directory, file_name: String):
 	var has_orm = not orm_path.is_empty()
 	
 	for file in valid_files:
+		var opacity_mask
 		if file.containsn("Color"):
+			for f in valid_files:
+				if f.containsn("Opacity"):
+					opacity_mask = f
+			if opacity_mask:
+				create_albedo_with_alpha(file,opacity_mask)
+				new_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 			new_material.albedo_texture = load(file)
 			if not override_material_save_path.is_empty():
 				var new_path: String = override_material_save_path.path_join(file_name) +"."+ file.get_extension()
@@ -438,6 +465,7 @@ func create_material(directory, file_name: String):
 				editor_fs.update_file(new_path)
 				await await_for_reimport()
 			albedo_filename = file.get_basename()
+			
 			
 		if file.containsn("Displacement"):
 			# disable heightmap with triplanar texture to avoid godot warning
