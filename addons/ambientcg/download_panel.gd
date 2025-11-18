@@ -273,8 +273,14 @@ func await_for_reimport():
 
 func create_albedo_with_alpha(color_file,opacity_file):
 		%DownloadLabel.text = "Creating ORM Texture"
-		var color_img := Image.load_from_file(color_file)
-		var opacity_img := Image.load_from_file(opacity_file)
+		#var color_img := Image.load_from_file(color_file)
+		#var opacity_img := Image.load_from_file(opacity_file)
+		
+		var color_texture = load(color_file) as Texture2D
+		var opacity_texture = load(opacity_file) as Texture2D
+		
+		var color_img := color_texture.get_image()
+		var opacity_img := opacity_texture.get_image()
 		
 		if color_img.get_format() != Image.FORMAT_RGBA8:
 			color_img.convert(Image.FORMAT_RGBA8)
@@ -285,12 +291,11 @@ func create_albedo_with_alpha(color_file,opacity_file):
 				var opacity_pixel := opacity_img.get_pixel(x, y)
 				color_pixel.a = opacity_pixel.r
 				color_img.set_pixel(x, y, color_pixel)
-		color_img.save_png(color_file)
-		if FileAccess.file_exists(opacity_file):
-			DirAccess.remove_absolute(opacity_file)
-			print("Deleted original component file: ", opacity_file)
-		
+		var new_png_path = color_file.get_basename() + ".png"
+		color_img.save_png(new_png_path)
 
+		return new_png_path
+		
 func create_orm_texture(directory: String, file_name: String, valid_files: Array[String]) -> String:
 	print("Creating ORM texture")
 	
@@ -456,8 +461,20 @@ func create_material(directory, file_name: String):
 				if f.containsn("Opacity"):
 					opacity_mask = f
 			if opacity_mask:
-				create_albedo_with_alpha(file,opacity_mask)
 				new_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+				var new_png_path = create_albedo_with_alpha(file,opacity_mask)
+				editor_fs.scan()
+				editor_fs.update_file(new_png_path)
+				await await_for_reimport()
+				file = new_png_path
+				print("updated ", file, " with ", new_png_path)
+				# if Color was a JPG, remove it
+				if FileAccess.file_exists(file.get_basename() + ".jpg"):
+					DirAccess.remove_absolute(file.get_basename() + ".jpg")
+					print("Deleted original JPG: ", file.get_basename() + ".jpg")
+				if FileAccess.file_exists(opacity_mask):
+					DirAccess.remove_absolute(opacity_mask)
+					print("Deleted opacity file: ", opacity_mask)
 			new_material.albedo_texture = load(file)
 			if not override_material_save_path.is_empty():
 				var new_path: String = override_material_save_path.path_join(file_name) +"."+ file.get_extension()
