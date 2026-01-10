@@ -23,7 +23,6 @@ var last_search_result : Dictionary
 var awaiting_search_finish : bool = false
 var active : bool = false
 
-
 func open() -> void:
 	last_search_result.clear()
 	next_query_uri = ""
@@ -75,19 +74,27 @@ func search(search_query : String = "", use_next_query : bool = false):
 	if not active: return
 	var use_shortlink : bool = false
 	
-	if search_query.containsn("https://ambientcg.com/a/"): # assume its a shortlink https://github.com/VenitStudios/AmbientCG/issues/7
-		use_shortlink = true
-		search_query = search_query.replacen("https://ambientcg.com/a/", "")
+	# this is broken ignore it.
+	# but it should assume its a shortlink and automatically find the download https://github.com/VenitStudios/AmbientCG/issues/7
+	#if search_query.containsn("https://ambientcg.com/a/"):
+		#use_shortlink = true
+		#search_query = search_query.replacen("https://ambientcg.com/a/", "")
 	
 	awaiting_search_finish = true
 	
 	var search_result := await AmbientAPI.search_assets(search_query, type_text, next_query_uri if use_next_query else "")
-	var parsed := AmbientParser.parse_search_query_data(search_result)
-	last_search_result = parsed
-	next_query_uri = parsed.get("next_query_uri", "")
-	create_search_results(parsed, not use_next_query)
 	
-	search_result_count.text = "%s Results Found" % int(parsed.get("result_count_total", 0)) 
+	# avoid parsing if awaiting_search_finish is false, can happen if a new search is started while waiting for a response
+	if awaiting_search_finish: 
+		var parsed := AmbientParser.parse_search_query_data(search_result)
+		last_search_result = parsed
+		next_query_uri = parsed.get("next_query_uri", "")
+		create_search_results(parsed, not use_next_query)
+		
+		search_result_count.text = "%s Results Found" % int(parsed.get("result_count_total", 0)) 
+	else:
+		search_result_count.text = ""
+	
 	awaiting_search_finish = false
 
 func clear_search_results() -> void:
@@ -104,6 +111,26 @@ func create_search_results(data : Dictionary, clear : bool) -> void:
 	for asset in data.get("assets"):
 		var widget : AmbientBrowserWidget = BROWSER_WIDGET.instantiate()
 		widget.material_json = asset
-		widget.update()
+		widget.update(self)
 		
 		search_grid.add_child(widget)
+
+signal pop_up_closed(accepted: bool)
+func popup_accept(title: String, content: String, ok_text:="Ok", cancel_text:="Cancel") -> bool:
+	var dialog := ConfirmationDialog.new()
+	dialog.initial_position = Window.WINDOW_INITIAL_POSITION_CENTER_SCREEN_WITH_MOUSE_FOCUS
+	add_child(dialog)
+	dialog.visible = true
+	dialog.title = title
+	dialog.dialog_text = content
+	
+	dialog.ok_button_text = ok_text
+	dialog.cancel_button_text = cancel_text
+	
+	dialog.canceled.connect(pop_up_closed.emit.bind(false))
+	dialog.confirmed.connect(pop_up_closed.emit.bind(true))
+	
+	var result: bool = await pop_up_closed
+	dialog.queue_free()
+	
+	return result

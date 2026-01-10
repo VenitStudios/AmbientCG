@@ -13,27 +13,30 @@ func update_user_agent() -> void:
 
 func http_request(url: String, custom_headers: PackedStringArray = PackedStringArray(), method: HTTPClient.Method = 0, request_data: String = ""):
 	update_user_agent()
-	var http_request = HTTPRequest.new()
-	add_child(http_request)
-	custom_headers.append("User-Agent: %s" % USER_AGENT)
-	http_request.request(url, custom_headers, method, request_data)
-	var response = await http_request.request_completed
-	remove_child(http_request)
-	http_request.queue_free()
-	return response
+	if not url.is_empty():
+		var http_request = HTTPRequest.new()
+		add_child(http_request)
+		custom_headers.append("User-Agent: %s" % USER_AGENT)
+		http_request.request(url, custom_headers, method, request_data)
+		var response = await http_request.request_completed
+		remove_child(http_request)
+		http_request.queue_free()
+		return response
+	return []
 
 
 func http_request_raw(url: String, custom_headers: PackedStringArray = PackedStringArray(), method: HTTPClient.Method = 0, request_data: PackedByteArray = []):
 	update_user_agent()
-	
-	var http_request = HTTPRequest.new()
-	add_child(http_request)
-	custom_headers.append("User-Agent: %s" % USER_AGENT)
-	http_request.request_raw(url, custom_headers, method, request_data)
-	var response = await http_request.request_completed
-	remove_child(http_request)
-	http_request.queue_free()
-	return response
+	if not url.is_empty():
+		var http_request = HTTPRequest.new()
+		add_child(http_request)
+		custom_headers.append("User-Agent: %s" % USER_AGENT)
+		http_request.request_raw(url, custom_headers, method, request_data)
+		var response = await http_request.request_completed
+		remove_child(http_request)
+		http_request.queue_free()
+		return response
+	return []
 
 var download_progress : Dictionary[String, int] = {}
 

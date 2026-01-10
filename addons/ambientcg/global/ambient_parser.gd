@@ -2,6 +2,8 @@
 
 const ALLOWED_EXTENSIONS : PackedStringArray = ["png", "jpg"]
 
+const TEMP_FILE_PATH := "user://temp_acg_tres.tres"
+
 func api_info_to_version_string(json : Dictionary = AmbientAPI.api_information) -> String:
 	# this could be cleaner but im not  gonna bother - cs
 	var string = json.get("id", "") + " v" + json.get("meta", {}).get("version", "") + "\n" + json.get("data", {}).get("text", {}).get("description")
@@ -32,14 +34,14 @@ func api_info_to_option_button(button : OptionButton, json : Dictionary = Ambien
 
 func parse_search_query_data(json : Dictionary) -> Dictionary:
 	var output : Dictionary = {}
-	var data : Dictionary = json.get("data")
+	var data : Dictionary = json.get("data", {})
 	var response_statistics : Dictionary = data.get("response_statistics", {})
 	var next_query : Dictionary = data.get("next_query", {})
 	var payload : Dictionary = next_query.get("payload", {})
 	
 	output["result_count_total"] = response_statistics.get("result_count_total", 0)
 	
-	var id : String = get_parameter_from_key_and_type("type", "text", asset_list_query(AmbientAPI.api_information)).get("id")
+	var id : String = get_parameter_from_key_and_type("type", "text", asset_list_query(AmbientAPI.api_information)).get("id", "")
 	var payload_str = "?%s=%s&offset=%d&type=%s" % [id, payload.get(id, ""), payload.get("offset", 0), payload.get("type", "any")]
 	
 	output["next_query_uri"] = str(next_query.get("uri", ""), payload_str)
@@ -105,7 +107,6 @@ func parse_asset_implementation(json : Dictionary) -> Array[Dictionary]:
 			var id : String = component.get("id", "")
 			var data : Dictionary = component.get("data", {})
 			
-			
 			var fetch_download : Dictionary = data.get("fetch.download", {})
 			var unlock_query_id = fetch_download.get("unlock_query_id", null) # ignored in ambientcg
 			var download_query : Dictionary = fetch_download.get("download_query", {})
@@ -126,3 +127,15 @@ func parse_asset_implementation(json : Dictionary) -> Array[Dictionary]:
 				output.append(implementation_output)
 			
 	return output
+
+# this could be a lot more efficient but oh well - cslr
+# in theory it could save the .tres file then auto populate the deps but it caused a missing dependency error when i tried it - cslr
+func pull_tres_dependencies(zip_reader: ZIPReader, tres_file: String) -> Dictionary:
+	var content: PackedByteArray = zip_reader.read_file(tres_file, false)
+	AmbientFileHandler.save_buffer(TEMP_FILE_PATH, content)
+	
+	var dependencies: PackedStringArray = ResourceLoader.get_dependencies(TEMP_FILE_PATH)
+	
+	DirAccess.remove_absolute(TEMP_FILE_PATH)
+	
+	return {"tres_content": content,  "dependencies": dependencies}

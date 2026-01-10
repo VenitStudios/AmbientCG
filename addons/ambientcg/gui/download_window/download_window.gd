@@ -22,6 +22,8 @@ var parsed_implementations : Array[Dictionary]
 var last_used_file : String
 var last_used_file_info : Dictionary
 
+var root_ui : AmbientUI
+
 func pop_up(_material_json : Dictionary, icon : Texture2D = null) -> void:
 	hide()
 	force_native = true
@@ -130,15 +132,72 @@ func prompt_user_for_extraction(source_file : String) -> void:
 	var reader := ZIPReader.new()
 	reader.open(source_file)
 	extraction_source_file = source_file
-	var files = reader.get_files()
-	reader.close()
 	
+	var files: PackedStringArray = reader.get_files()
+	
+	var found_tres: String = find_tres(files)
+	var ignoring_tres: bool
+	
+	if not found_tres.is_empty():
+		ignoring_tres = not await root_ui.popup_accept(".tres File Found!", ".tres file found. Use %s instead?" % found_tres)
+	
+	await get_tree().process_frame
+	grab_focus()
+	
+	if ignoring_tres:
+		for file in files:
+			var button = CheckBox.new()
+			button.text = file
+			button.name = file
+			extract_file_options.add_child(button)
+			extraction_file_links[file] = button
+	else: # all of this should probably happen elsewhere but oh well - cslr
+		var file_sys := EditorInterface.get_resource_filesystem()
+		
+		var result: Dictionary = AmbientParser.pull_tres_dependencies(reader, found_tres)
+		var tres_content: PackedByteArray = result.get("tres_content", [])
+		var dependencies: PackedStringArray = result.get("dependencies", [])
+		
+		var read_files: Dictionary
+		
+		for dependency in dependencies:
+			var dependency_name: String = dependency.get_file()
+			
+			if files.has(dependency_name):
+				read_files[dependency_name] = reader.read_file(dependency_name, false)
+		
+		read_files[found_tres] = tres_content
+		
+		AmbientFileHandler.check_dirs()
+		var directory := await AmbientFileHandler.open_directory_dialog_for_path(ProjectSettings.get_setting("ambientcg/material_file_directory"))
+		if not (directory.ends_with("\\") or directory.ends_with("/")):
+			directory = directory + "/"
+		
+		for file_name: String in read_files.keys():
+			var file_contents: PackedByteArray = read_files[file_name]
+			
+			var file := FileAccess.open(directory + file_name, FileAccess.WRITE)
+			
+			if file.is_open():
+				file.store_buffer(file_contents)
+				file.close()
+			file_sys.update_file(file_name)
+		
+		file_sys.scan()
+		file_sys.scan_sources()
+		
+		reader.close()
+		_on_close_requested()
+		return
+	
+	reader.close()
+
+
+func find_tres(files: PackedStringArray) -> String:
 	for file in files:
-		var button = CheckBox.new()
-		button.text = file
-		button.name = file
-		extract_file_options.add_child(button)
-		extraction_file_links[file] = button
+		if file.containsn(".tres"):
+			return file
+	return ""
 
 
 func extract_button_pressed() -> void:

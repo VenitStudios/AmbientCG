@@ -2,7 +2,7 @@
 
 
 func make_standard_material(files : PackedStringArray, options : Dictionary) -> StandardMaterial3D:
-	var material = StandardMaterial3D.new()
+	var material := StandardMaterial3D.new()
 	material.uv1_triplanar = options.get("use_triplanar_uv", false)
 	
 	for file : String in files:
@@ -24,7 +24,7 @@ func make_standard_material(files : PackedStringArray, options : Dictionary) -> 
 
 
 func make_orm_material(files : PackedStringArray, options : Dictionary) -> ORMMaterial3D:
-	var material = ORMMaterial3D.new()
+	var material := ORMMaterial3D.new()
 	
 	
 	

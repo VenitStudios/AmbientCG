@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://dns7le84qmy3s" path="res://addons/ambientcg/gui/TMakerBG.gd" id="2_8pnig"]
 
 [node name="DownloadWindow" type="Window"]
+oversampling_override = 1.0
 initial_position = 2
 size = Vector2i(720, 480)
 exclusive = true
@@ -15,7 +16,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.12549, 0.12549, 0.12549, 1)
+color = Color(0.1254902, 0.1254902, 0.1254902, 1)
 script = ExtResource("2_8pnig")
 metadata/_custom_type_script = "uid://dns7le84qmy3s"
 
@@ -173,6 +174,7 @@ text = "Resize"
 
 [node name="enable_packing" type="CheckButton" parent="ExtractPanel/PopulationOptionsContainer"]
 unique_name_in_owner = true
+visible = false
 custom_minimum_size = Vector2(128, 32)
 layout_mode = 2
 text = "Pack ORM"

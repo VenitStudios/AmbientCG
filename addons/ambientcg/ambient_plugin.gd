@@ -64,3 +64,4 @@ func add_default_settings():
 	
 	if not ProjectSettings.has_setting("ambientcg/environment_file_directory"):
 		ProjectSettings.set_setting("ambientcg/environment_file_directory", "res://AmbientCG/Environments")
+	
