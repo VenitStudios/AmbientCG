@@ -1,6 +1,8 @@
 # Godot AmbientCG Integration Plugin
 
   _Built in 4.5.1 and may not work in earlier versions before 4.4_
+
+  FYI: Editor may need to Restart to get the plugin properly working, godot might error out on some missing references
   
 
 ## Features
