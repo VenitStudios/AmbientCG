@@ -1,6 +1,7 @@
 # Godot AmbientCG Integration Plugin
 
   _Built in 4.5.1 and may not work in earlier versions before 4.4 due to typed dictionaries_
+  * As of Godot 4.8 dev4 Main screen plugins are deprecated, meaning this plugin no longer functions as expected.
 
   FYI: Editor may need to Restart to get the plugin properly working, godot might error out on some missing references
   
